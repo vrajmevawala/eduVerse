@@ -20,6 +20,52 @@ const TakeContest = () => {
   const location = useLocation();
   const isFullscreen = new URLSearchParams(location.search).get('fullscreen') === 'true';
   
+  // Anti-cheating: Shuffle functions to randomize question order and option positions
+  // This prevents students from sharing answers based on question/option positions
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const shuffleQuestionsAndOptions = (questions) => {
+    // Shuffle the questions array
+    const shuffledQuestions = shuffleArray(questions);
+    
+    // For each question, shuffle the options while keeping track of correct answers
+    return shuffledQuestions.map(question => {
+      if (!question.options || !Array.isArray(question.options)) {
+        return question;
+      }
+      
+      // Create array of option objects with their original indices
+      const optionsWithIndices = question.options.map((option, index) => ({
+        option,
+        originalIndex: index
+      }));
+      
+      // Shuffle the options
+      const shuffledOptionsWithIndices = shuffleArray(optionsWithIndices);
+      
+      // Create new options array and update correct answers
+      const newOptions = shuffledOptionsWithIndices.map(item => item.option);
+      const newCorrectAnswers = question.correctAnswers.map(correctAnswer => {
+        // Find the new index of the correct answer
+        const newIndex = shuffledOptionsWithIndices.findIndex(item => item.option === correctAnswer);
+        return newOptions[newIndex];
+      });
+      
+      return {
+        ...question,
+        options: newOptions,
+        correctAnswers: newCorrectAnswers
+      };
+    });
+  };
+  
   const [contest, setContest] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -485,8 +531,12 @@ const TakeContest = () => {
         const contestData = data.testSeries;
         const questionsData = contestData?.questions || [];
         
+        // Anti-cheating: Shuffle questions and options for each user
+        // This ensures every student gets a different question order and option arrangement
+        const shuffledQuestionsData = shuffleQuestionsAndOptions(questionsData);
+        
         setContest(contestData);
-        setQuestions(questionsData);
+        setQuestions(shuffledQuestionsData);
         
         // Calculate time left
         const now = new Date().getTime();
@@ -496,7 +546,7 @@ const TakeContest = () => {
         
         // Initialize answers
         const initialAnswers = {};
-        questionsData.forEach(q => {
+        shuffledQuestionsData.forEach(q => {
           initialAnswers[q.id] = '';
         });
         setAnswers(initialAnswers);

@@ -1,6 +1,8 @@
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import AdminResults from './AdminResults';
-import { Users, UserPlus, Activity, BarChart3, Eye, Plus, Settings, Trophy, Users as UsersIcon, FileText, Tag, Edit, Trash2, Video, X, Upload, Pencil, Download } from 'lucide-react';
+import { Users, UserPlus, Activity, BarChart3, Eye, Plus, Settings, Trophy, Users as UsersIcon, FileText, Tag, Edit, Trash2, Video, X, Upload, Pencil, Download, Bookmark as BookmarkIcon, Bot as BotIcon, Bell as BellIcon, LogOut as LogOutIcon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bar, Pie } from 'react-chartjs-2';
 import { toast } from 'react-toastify';
@@ -16,6 +18,10 @@ import {
   ArcElement
 } from 'chart.js';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+import { useNotifications } from '../contexts/NotificationContext.jsx';
+import AIAssistant from './AIAssistant.jsx';
+import Bookmark from './Bookmark.jsx';
+import CreateContest from './CreateContest.jsx';
 
 const AdminDashboard = ({ user, onNavigate }) => {
   const location = useLocation();
@@ -1129,6 +1135,22 @@ const AdminDashboard = ({ user, onNavigate }) => {
     { id: 'resources', label: 'Resources' },
     { id: 'contests', label: 'Contests' },
     { id: 'results', label: 'Results' },
+    { id: 'ai', label: 'AI Assistant' },
+    { id: 'bookmarks', label: 'Bookmarks' },
+    { id: 'notifications', label: 'Notifications' },
+    { id: 'createContest', label: 'Create Contest' },
+  ];
+  const sidebarItems = [
+    { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'moderators', label: 'Moderators', icon: UsersIcon },
+    { id: 'users', label: 'User Analytics', icon: Users },
+    { id: 'resources', label: 'Resources', icon: FileText },
+    { id: 'contests', label: 'Contests', icon: Trophy },
+    { id: 'results', label: 'Results', icon: BarChart3 },
+    { id: 'ai', label: 'AI Assistant', icon: BotIcon },
+    { id: 'bookmarks', label: 'Bookmarks', icon: BookmarkIcon },
+    { id: 'notifications', label: 'Notifications', icon: BellIcon },
+    { id: 'createContest', label: 'Create Contest', icon: Trophy },
   ];
 
   useEffect(() => {
@@ -1403,11 +1425,92 @@ const AdminDashboard = ({ user, onNavigate }) => {
     setShowContestModal(true);
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      localStorage.removeItem('jwt');
+      navigate('/');
+      window.location.reload();
+    } catch (_) {
+      navigate('/');
+    }
+  };
+
+  const AdminNotificationsPanel = () => {
+    const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Notifications</h2>
+          {unreadCount > 0 && (
+            <button onClick={markAllAsRead} className="text-sm text-blue-600 hover:text-blue-800">
+              Mark all read
+            </button>
+          )}
+        </div>
+        {notifications.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">No notifications yet</div>
+        ) : (
+          <div className="space-y-2 max-h-[70vh] overflow-y-auto">
+            {notifications.map((n) => (
+              <div key={n.id} className={`p-3 rounded border ${!n.isRead ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'}`}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className={`text-sm font-medium ${!n.isRead ? 'text-gray-900' : 'text-gray-700'}`}>{n.title}</p>
+                    <p className="text-sm text-gray-600">{n.message}</p>
+                    <p className="text-xs text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
+                  </div>
+                  <div className="flex items-center gap-2 ml-3">
+                    {!n.isRead && (
+                      <button onClick={() => markAsRead(n.id)} className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">Read</button>
+                    )}
+                    <button onClick={() => deleteNotification(n.id)} className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded">Delete</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="page">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-2">Manage moderators and monitor system performance</p>
+      <div className="min-h-screen flex">
+        <aside className="w-64 border-r border-gray-200 bg-white p-4 sticky top-0 self-start h-screen overflow-y-auto">
+          <div className="mb-4">
+            <img src="../assests/logo.png" alt="logo" className="w-40 h-15" />
+          </div>
+          <nav className="space-y-1">
+            {sidebarItems.map((item) => {
+              const Icon = item.icon;
+              const active = selectedTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setSelectedTab(item.id)}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-sm text-sm transition-colors ${active ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                >
+                  {Icon && <Icon className="w-4 h-4" />}
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+          <div className="mt-6 border-t border-gray-200 pt-4 space-y-1">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-sm text-sm text-red-600 hover:bg-red-50"
+            >
+              <LogOutIcon className="w-4 h-4" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </aside>
+        <div className="flex-1 px-4 py-8">
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <p className="text-gray-600 mt-2">Manage moderators and monitor system performance</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           <div className="bg-white p-6 border border-gray-200 rounded-lg flex justify-between items-center">
@@ -1437,26 +1540,6 @@ const AdminDashboard = ({ user, onNavigate }) => {
                 <p className="text-2xl font-bold">{stats ? stats.successRate + '%' : '...'}</p>
               </div>
               <BarChart3 className="w-8 h-8 text-gray-400" />
-          </div>
-        </div>
-
-        <div className="my-6">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8">
-              {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedTab(tab.id)}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    selectedTab === tab.id
-                      ? 'border-black text-black'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
           </div>
         </div>
 
@@ -1503,7 +1586,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                 <span>Add Resource</span>
               </button>
               <button
-                onClick={() => navigate('/create-contest')}
+                onClick={() => setSelectedTab('createContest')}
                 className="w-full flex items-center justify-center space-x-2 border border-gray-300 px-4 py-3 rounded-md hover:bg-gray-50"
               >
                 <Trophy className="w-5 h-5" />
@@ -1599,6 +1682,28 @@ const AdminDashboard = ({ user, onNavigate }) => {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {selectedTab === 'ai' && (
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <AIAssistant user={user} />
+          </div>
+        )}
+
+        {selectedTab === 'bookmarks' && (
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <Bookmark isAdmin={true} />
+          </div>
+        )}
+
+        {selectedTab === 'notifications' && (
+          <AdminNotificationsPanel />
+        )}
+
+        {selectedTab === 'createContest' && (
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <CreateContest />
           </div>
         )}
 
@@ -1722,9 +1827,41 @@ const AdminDashboard = ({ user, onNavigate }) => {
                 <form className="bg-gray-50 border border-gray-200 rounded-lg p-4" onSubmit={handleJsonUpload}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Upload Questions (JSON)</label>
                   <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-                    <input type="file" accept=".json" ref={jsonFileInputRef} className="border rounded px-3 py-2 w-full sm:w-auto" />
-                    <button type="submit" className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 border border-black">Upload</button>
-                  </div>
+                  <input 
+                    type="file" 
+                    accept=".json" 
+                    ref={jsonFileInputRef} 
+                    className="border rounded px-3 py-2 w-full sm:w-auto" 
+                  />
+                  <button 
+                    type="submit" 
+                    className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 border border-black"
+                  >
+                    Upload
+                  </button>
+
+                  {/* Tooltip Info Button */}
+                  {/* <div className="relative group">
+                    <button className="mt-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-bold italic">
+                      𝒾
+                    </button>
+                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-black text-white text-xs p-3 rounded-lg w-64">
+                      <p className="whitespace-pre-line text-left">
+                        {`{
+                          "category": "",
+                          "subcategory": "",
+                          "level": "",
+                          "question": "",
+                          "options": ["", "", "", ""],
+                          "correctAnswers": [""],
+                          "explanation": "",
+                          "visibility": 
+                        }`}
+                      </p>
+                    </div>
+                  </div> */}
+                </div>
+
                   {jsonUploadStatus && <p className="mt-2 text-sm text-gray-600">{jsonUploadStatus}</p>}
                 </form>
               </div>
@@ -1767,7 +1904,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                       Delete Selected ({selectedMCQIds.length})
                     </button>
                   )}
-                  {/* <button
+                  <button
                     onClick={() => {
                       if (window.confirm(`Delete ALL ${allQuestions.length} questions? This action cannot be undone!`)) {
                         handleDeleteAllQuestions();
@@ -1776,7 +1913,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                     className="px-3 py-1 bg-red-800 text-white text-sm rounded hover:bg-red-900 transition-colors"
                   >
                     Delete All ({allQuestions.length})
-                  </button> */}
+                  </button>
                 </div>
               </div>
               
@@ -1917,7 +2054,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                         Delete Selected ({selectedResourceIds.length})
                       </button>
                     )}
-                    {/* <button
+                    <button
                       onClick={() => {
                         if (window.confirm(`Delete ALL ${resources.length} ${resourceView === 'pdf' ? 'PDFs' : 'videos'}? This action cannot be undone!`)) {
                           handleDeleteAllResources();
@@ -1926,7 +2063,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                       className="px-3 py-1 bg-red-800 text-white text-sm rounded hover:bg-red-900 transition-colors"
                     >
                       Delete All ({resources.length})
-                    </button> */}
+                    </button>
                   </div>
                 </div>
                 
@@ -2079,7 +2216,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                   <option value="without">Without Code</option>
                 </select>
                 <button
-                  onClick={() => navigate('/create-contest')}
+                  onClick={() => setSelectedTab('createContest')}
                   className="flex items-center space-x-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
                 >
                   <Plus className="w-4 h-4" />
@@ -2116,7 +2253,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                     Delete Selected ({selectedContestIds.length})
                   </button>
                 )}
-                {/* <button
+                <button
                   onClick={() => {
                     if (window.confirm(`Delete ALL ${filteredContests.length} contests? This action cannot be undone!`)) {
                       handleDeleteAllContests();
@@ -2125,7 +2262,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                   className="px-3 py-1 bg-red-800 text-white text-sm rounded hover:bg-red-900 transition-colors"
                 >
                   Delete All ({filteredContests.length})
-                </button> */}
+                </button>
               </div>
             </div>
             
@@ -3069,6 +3206,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
         )}
 
       </div>
+    </div>
     </div>
   );
 };

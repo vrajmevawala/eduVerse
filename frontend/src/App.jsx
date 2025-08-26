@@ -213,14 +213,16 @@ function App() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <Navigation 
-          user={user} 
-          onLogout={handleLogout}
-          isContestMode={isContestMode}
-          onOpenAuthModal={openAuthModal}
-        />
+        {!(user && user.role === 'admin' && location.pathname === '/dashboard') && (
+          <Navigation 
+            user={user} 
+            onLogout={handleLogout}
+            isContestMode={isContestMode}
+            onOpenAuthModal={openAuthModal}
+          />
+        )}
         <motion.main 
-          className="pt-16"
+          className={(user && user.role === 'admin' && location.pathname === '/dashboard') ? '' : 'pt-16'}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -272,7 +274,9 @@ function App() {
           </Routes>
           <ToastContainer position="top-right" autoClose={3000} />
         </motion.main>
-        <Footer user={user} onOpenAuthModal={openAuthModal} />
+        {!(user && user.role === 'admin' && location.pathname === '/dashboard') && (
+          <Footer user={user} onOpenAuthModal={openAuthModal} />
+        )}
 
 
 

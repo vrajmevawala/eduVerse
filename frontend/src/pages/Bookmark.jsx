@@ -1,7 +1,7 @@
 import { BookmarkCheck, FileText, Video, Target, Download, Play } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-const Bookmark = () => {
+const Bookmark = ({ isAdmin = false }) => {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -179,8 +179,8 @@ const Bookmark = () => {
 
   return (
     <div className="page py-12 px-4">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold text-black drop-shadow mb-2">Bookmarks</h1>
+      <div className={`mb-10 ${!isAdmin ? 'text-center' : ''}`}>
+        <h1 className="text-3xl font-bold text-black mb-2">Bookmarks</h1>
         {unbookmarkedItems.size > 0 && (
           <p className="text-sm text-gray-600">
             {unbookmarkedItems.size} item{unbookmarkedItems.size !== 1 ? 's' : ''} unbookmarked - click "Refresh" to clear
