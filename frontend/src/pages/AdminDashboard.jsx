@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AdminResults from './AdminResults';
-import { Users, UserPlus, Activity, BarChart3, Eye, Plus, Settings, Trophy, Users as UsersIcon, FileText, Tag, Edit, Trash2, Video, X, Upload, Pencil } from 'lucide-react';
+import { Users, UserPlus, Activity, BarChart3, Eye, Plus, Settings, Trophy, Users as UsersIcon, FileText, Tag, Edit, Trash2, Video, X, Upload, Pencil, Download } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bar, Pie } from 'react-chartjs-2';
 import { toast } from 'react-toastify';
@@ -1982,22 +1982,22 @@ const AdminDashboard = ({ user, onNavigate }) => {
                             <td className="py-2 px-3">{resource.level}</td>
                             <td className="py-2 px-3">{resource.type}</td>
                             <td className="py-2 px-3 flex gap-2">
-                              {resourceView === 'pdf' && resource.fileName && (
+                              {/* {resourceView === 'pdf' && resource.fileName && (
                                 <a 
                                   href={`http://localhost:5001/uploads/resources/${resource.fileName}`} 
                                   target="_blank" 
                                   rel="noreferrer"
-                                  className="text-blue-600 hover:underline"
+                                  className="text-black hover:text-blue-600"
                                 >
-                                  View
+                                  <Eye className="w-4 h-4" />
                                 </a>
-                              )}
+                              )} */}
                               {resourceView === 'video' && resource.videoUrl && (
                                 <a 
                                   href={resource.videoUrl} 
                                   target="_blank" 
                                   rel="noreferrer"
-                                  className="text-blue-600 hover:underline"
+                                  className="text-black hover:text-red-600"
                                 >
                                   {resource.videoUrl.includes('youtube.com') || resource.videoUrl.includes('youtu.be') ? (
                                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -2009,9 +2009,9 @@ const AdminDashboard = ({ user, onNavigate }) => {
                               {resourceView === 'pdf' && resource.fileName && (
                                 <button 
                                   onClick={() => handleResourceDownload(resource.id, resource.fileName)}
-                                  className="text-blue-600 hover:underline"
+                                  className="text-black hover:text-blue-600"
                                 >
-                                  Download
+                                  <Download className="w-4 h-4" />
                                 </button>
                               )}
                               <button 
@@ -2175,7 +2175,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                             </button>
                             <button onClick={() => handleViewContestQuestions(contest)} title="View Details" className="flex items-center gap-2">
                               <Eye className="w-5 h-5 text-gray-800" />
-                              <span className="text-sm font-medium">View Details</span>
+                              {/* <span className="text-sm font-medium">View Details</span> */}
                             </button>
                           </div>
                         </td>

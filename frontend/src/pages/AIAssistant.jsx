@@ -72,7 +72,11 @@ import {
   MessageCircle,
   BookOpen,
   Target,
-  BarChart3
+  BarChart3,
+  Trash2,
+  Settings,
+  Sparkles,
+  User
 } from 'lucide-react';
 
 const AIAssistant = ({ user }) => {
@@ -264,68 +268,138 @@ const AIAssistant = ({ user }) => {
       }
     ]);
   };
+    const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && (file.type === 'application/pdf' || file.type.startsWith('image/'))) {
+      setSelectedAnalysisFile(file);
+    } else {
+      alert('Please select a valid PDF or image file.');
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
-              <Brain className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-14 h-14 bg-black to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Brain className="w-7 h-7 text-white" />
+                </div>
+                {/* <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div> */}
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  AI Study Assistant
+                </h1>
+                <p className="text-gray-600 flex items-center gap-1">
+                  <Sparkles className="w-4 h-4" />
+                  Your intelligent learning companion
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">AI Study Assistant</h1>
-              <p className="text-gray-600">Your intelligent learning companion</p>
-            </div>
+            {user && (
+              <div className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
+                <User className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-700">Welcome, {user.fullName}</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Chat Interface */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20">
               <div className="p-6">
-                <div className="bg-gray-50 rounded-xl p-4 h-[70vh] flex flex-col">
+                {/* Chat Header */}
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+                  <div className="flex items-center space-x-2">
+                    <Bot className="w-5 h-5 text-black-600" />
+                    <h2 className="text-lg font-semibold text-gray-800">Chat Assistant</h2>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <select
+                      value={responseMode}
+                      onChange={(e) => setResponseMode(e.target.value)}
+                      className="px-3 py-1.5 border border-gray-200 rounded-full text-xs text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
+                      title="Response length"
+                    >
+                      <option value="concise">Concise</option>
+                      <option value="balanced">Balanced</option>
+                      <option value="detailed">Detailed</option>
+                    </select>
+                    <button
+                      onClick={handleClearChat}
+                      className="px-3 py-1.5 text-xs border border-gray-200 rounded-full text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      Clear
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-b from-gray-50/50 to-white/50 rounded-2xl p-4 h-[65vh] flex flex-col">
                   {/* Chat Messages */}
                   <div 
                     ref={chatContainerRef}
-                    className="flex-1 overflow-y-auto space-y-4 mb-4"
+                    className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2"
+                    style={{ scrollbarWidth: 'thin', scrollbarColor: '#e5e7eb #f3f4f6' }}
                   >
                     {chatMessages.map((message) => (
                       <div
                         key={message.id}
-                        className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                        className={`flex items-start space-x-2 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
+                        {message.type === 'bot' && (
+                          <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <Bot className="w-4 h-4 text-white" />
+                          </div>
+                        )}
                         <div
-                          className={`max-w-xs px-4 py-3 rounded-2xl ${
+                          className={`max-w-md px-4 py-3 rounded-2xl shadow-sm ${
                             message.type === 'user'
-                              ? 'bg-black text-white'
-                              : 'bg-gray-300 text-black'
+                              ? 'bg-black text-white ml-8'
+                              : 'bg-white border border-gray-100 text-gray-800'
                           }`}
                         >
                           {message.type === 'bot' ? (
                             <div
-                              className="prose prose-sm max-w-none text-gray-900"
+                              className="prose prose-sm max-w-none text-gray-800"
                               dangerouslySetInnerHTML={{ __html: parseMarkdownToHtml(message.message) }}
                             />
                           ) : (
                             <p className="text-sm whitespace-pre-line">{message.message}</p>
                           )}
-                          <p className="text-xs opacity-70 mt-2">
+                          <p className={`text-xs mt-2 ${message.type === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
                             {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </p>
                         </div>
+                        {message.type === 'user' && (
+                          <div className="w-8 h-8 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <User className="w-4 h-4 text-white" />
+                          </div>
+                        )}
                       </div>
                     ))}
                     {isTyping && (
-                      <div className="flex justify-start">
-                        <div className="bg-gray-300 text-gray-800 px-4 py-3 rounded-2xl shadow-sm">
+                      <div className="flex items-start space-x-2 justify-start">
+                        <div className="w-8 h-8 bg-black  rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                          <Bot className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="bg-white border border-gray-100 px-4 py-3 rounded-2xl shadow-sm">
                           <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-gray-700 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-gray-700 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-gray-700 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-2 h-2 bg-black rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                           </div>
                         </div>
                       </div>
@@ -333,39 +407,24 @@ const AIAssistant = ({ user }) => {
                   </div>
 
                   {/* Message Input */}
-                  <div className="flex items-center space-x-3">
-                    {/* Mode selector */}
-                    <select
-                      value={responseMode}
-                      onChange={(e) => setResponseMode(e.target.value)}
-                      className="px-2 py-2 border border-gray-300 rounded-lg text-xs text-gray-700"
-                      title="Response length"
-                    >
-                      <option value="concise">Concise</option>
-                      <option value="balanced">Balanced</option>
-                      <option value="detailed">Detailed</option>
-                    </select>
-                    <input
-                      type="text"
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                      placeholder="Ask me anything about aptitude, DSA, or technical topics..."
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent text-sm"
-                    />
-                    <button
-                      onClick={handleSendMessage}
-                      disabled={!newMessage.trim() || isTyping}
-                      className="bg-black text-white p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Send className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={handleClearChat}
-                      className="px-3 py-2 text-xs border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
-                    >
-                      Clear
-                    </button>
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/60 p-3 shadow-sm">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="text"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                        placeholder="Ask me anything about aptitude, DSA, or technical topics..."
+                        className="flex-1 px-4 py-3 bg-transparent border-none outline-none text-sm placeholder-gray-500"
+                      />
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={!newMessage.trim() || isTyping}
+                        className="bg-black text-white p-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transform hover:scale-105"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -374,103 +433,157 @@ const AIAssistant = ({ user }) => {
 
           {/* File Analysis Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6">
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">File Analysis</h3>
-                <p className="text-sm text-gray-600">Upload files for AI analysis</p>
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">File Analysis</h3>
+                    <p className="text-sm text-gray-600">Upload files for AI insights</p>
+                  </div>
+                </div>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Analysis Type</label>
                   <select
                     value={analysisType}
                     onChange={(e) => setAnalysisType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white shadow-sm"
                   >
-                    <option value="summary">Summary</option>
-                    <option value="explanation">Explanation</option>
-                    <option value="questions">Generate Questions</option>
+                    <option value="summary">📄 Summary</option>
+                    <option value="explanation">💡 Explanation</option>
+                    <option value="questions">❓ Generate Questions</option>
                   </select>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Upload File</label>
-                  <input
-                    type="file"
-                    accept=".pdf,image/*"
-                    onChange={handleAnalysisFileSelect}
-                    className="w-full text-sm"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Upload File</label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept=".pdf,image/*"
+                      onChange={handleAnalysisFileSelect}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                      className="w-full border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-all duration-200"
+                    >
+                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-600 text-center">
+                        <span className="font-medium text-blue-600">Click to upload</span>
+                        <br />or drag and drop
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">PDF, JPEG, PNG up to 10MB</p>
+                      
+                    </label>
+                  </div>
+                  
                   {selectedAnalysisFile && (
-                    <p className="text-xs text-gray-600 mt-2">Selected: {selectedAnalysisFile.name}</p>
+                    <div className="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-200">
+                      <div className="flex items-center space-x-2">
+                        <FileText className="w-4 h-4 text-blue-600" />
+                        <span className="text-sm text-blue-800 font-medium truncate">
+                          {selectedAnalysisFile.name}
+                        </span>
+                      </div>
+                    </div>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">
-                    Supported: PDF files and images (JPEG, PNG, etc.)
-                  </p>
                 </div>
                 
                 <button
                   onClick={handleAnalyzeFile}
                   disabled={!selectedAnalysisFile || analyzing}
-                  className="w-full px-4 py-3 bg-black text-white text-sm rounded-lg hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="w-full px-4 py-3 bg-black text-white text-sm rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-md transform hover:scale-105"
                 >
                   {analyzing ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
                       <span>Analyzing...</span>
                     </>
                   ) : (
                     <>
-                      <Upload className="w-4 h-4" />
+                      <Sparkles className="w-4 h-4" />
                       <span>Analyze File</span>
                     </>
                   )}
                 </button>
                 
-                <div className="text-xs text-gray-500 space-y-1">
-                  <p><strong>Tips:</strong></p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>PDFs and images are analyzed using AI vision</li>
-                    <li>Ensure files are clear and readable</li>
-                    <li>Analysis results will appear in the chat</li>
-                    <li>Supported: PDF, JPEG, PNG, and other image formats</li>
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                  <p className="text-xs font-medium text-gray-700 mb-2">✨ AI Analysis Features</p>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>• Smart document understanding</li>
+                    <li>• Question generation from content</li>
+                    <li>• Instant explanations & summaries</li>
+                    <li>• Multi-format support (PDF, images)</li>
                   </ul>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 mt-6">
+              <div className="flex items-center space-x-2 mb-5">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                  <Lightbulb className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Quick Start</h3>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
                 <button
                   onClick={() => setNewMessage("Help me with aptitude questions")}
-                  className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                  className="w-full flex items-center space-x-3 p-4 text-left bg-gradient-to-r from-blue-50 to-blue-100/50 hover:from-blue-100 hover:to-blue-200/50 rounded-2xl transition-all duration-200 border border-blue-200/50 group"
                 >
-                  <Target className="w-5 h-5 text-blue-500" />
-                  <span className="text-sm">Aptitude Help</span>
+                  <div className="w-8 h-8 bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Target className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-900">Aptitude Help</span>
+                    <p className="text-xs text-gray-600">Get help with math & logical reasoning</p>
+                  </div>
                 </button>
                 <button
                   onClick={() => setNewMessage("Explain DSA concepts")}
-                  className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                  className="w-full flex items-center space-x-3 p-4 text-left bg-gradient-to-r from-green-50 to-green-100/50 hover:from-green-100 hover:to-green-200/50 rounded-2xl transition-all duration-200 border border-green-200/50 group"
                 >
-                  <BarChart3 className="w-5 h-5 text-green-500" />
-                  <span className="text-sm">DSA Concepts</span>
+                  <div className="w-8 h-8 bg-green-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <BarChart3 className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-900">DSA Concepts</span>
+                    <p className="text-xs text-gray-600">Learn algorithms & data structures</p>
+                  </div>
                 </button>
                 <button
                   onClick={() => setNewMessage("Technical interview tips")}
-                  className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                  className="w-full flex items-center space-x-3 p-4 text-left bg-gradient-to-r from-purple-50 to-purple-100/50 hover:from-purple-100 hover:to-purple-200/50 rounded-2xl transition-all duration-200 border border-purple-200/50 group"
                 >
-                  <BookOpen className="w-5 h-5 text-purple-500" />
-                  <span className="text-sm">Interview Tips</span>
+                  <div className="w-8 h-8 bg-purple-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <BookOpen className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-900">Interview Tips</span>
+                    <p className="text-xs text-gray-600">Ace your technical interviews</p>
+                  </div>
                 </button>
                 <button
                   onClick={() => setNewMessage("Study strategies")}
-                  className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                  className="w-full flex items-center space-x-3 p-4 text-left bg-gradient-to-r from-yellow-50 to-yellow-100/50 hover:from-yellow-100 hover:to-yellow-200/50 rounded-2xl transition-all duration-200 border border-yellow-200/50 group"
                 >
-                  <Lightbulb className="w-5 h-5 text-yellow-500" />
-                  <span className="text-sm">Study Strategies</span>
+                  <div className="w-8 h-8 bg-yellow-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Lightbulb className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-900">Study Strategies</span>
+                    <p className="text-xs text-gray-600">Optimize your learning approach</p>
+                  </div>
                 </button>
               </div>
             </div>
