@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 
-const CreateContest = () => {
+const CreateContest = ({ contestId: contestIdProp, embedded = false, onClose }) => {
   const [contestName, setContestName] = useState("");
   const [numQuestions, setNumQuestions] = useState(5);
   const [startDate, setStartDate] = useState("");
@@ -25,6 +25,8 @@ const CreateContest = () => {
   const [endDate, setEndDate] = useState("");
   const [endTime, setEndTime] = useState("13:00");
   const [requiresCode, setRequiresCode] = useState(false);
+  const [hasNegativeMarking, setHasNegativeMarking] = useState(false);
+  const [negativeMarkingValue, setNegativeMarkingValue] = useState(0.25);
   const [allQuestions, setAllQuestions] = useState([]);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [filters, setFilters] = useState({ topic: "", difficulty: "" });
@@ -78,7 +80,8 @@ const CreateContest = () => {
   const [itemsPerPage] = useState(10);
 
   const navigate = useNavigate();
-  const { contestId } = useParams();
+  const { contestId: routeContestId } = useParams();
+  const contestId = contestIdProp || routeContestId;
   const isEditMode = !!contestId;
 
   // Helper to get current date and time for validation
@@ -437,6 +440,10 @@ const CreateContest = () => {
           setEndDate(endDateTime.toISOString().split("T")[0]);
           setEndTime(endDateTime.toTimeString().slice(0, 5));
           setRequiresCode(contestData.requiresCode || false);
+          
+          // Set negative marking data
+          setHasNegativeMarking(contestData.hasNegativeMarking || false);
+          setNegativeMarkingValue(contestData.negativeMarkingValue || 0.25);
 
           // Set selected questions
           setSelectedQuestions(contestData.questions);
@@ -779,6 +786,8 @@ const CreateContest = () => {
         startTime: `${startDate}T${startTime}`,
         endTime: `${endDate}T${endTime}`,
         requiresCode: requiresCode,
+        hasNegativeMarking: hasNegativeMarking,
+        negativeMarkingValue: negativeMarkingValue,
       }),
     });
 
@@ -791,7 +800,11 @@ const CreateContest = () => {
         ? `Contest created successfully! Contest Code: ${data.testSeries.contestCode}`
         : "Contest created successfully!";
       toast.success(message);
-      navigate("/admin-dashboard");
+      if (embedded && typeof onClose === "function") {
+        onClose({ updated: true });
+      } else {
+        navigate("/admin-dashboard");
+      }
     } else {
       const data = await res.json();
       const action = isEditMode ? "update" : "create";
@@ -844,6 +857,19 @@ const CreateContest = () => {
   return (
     <div className="page">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {embedded && isEditMode && (
+          <div className="flex justify-end mb-4">
+            <button
+              type="button"
+              onClick={() => (typeof onClose === "function" ? onClose() : navigate("/admin-dashboard"))}
+              className="inline-flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-black hover:bg-gray-100 border border-gray-200"
+              title="Close"
+            >
+              <X className="w-4 h-4" />
+              <span>Close</span>
+            </button>
+          </div>
+        )}
         {/* Header */}
         <div className="mb-12">
           <div className="flex items-center space-x-4 mb-4">
@@ -1027,6 +1053,55 @@ const CreateContest = () => {
                     will be generated automatically when you create this
                     contest. Users will need this code to join the contest.
                   </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="hasNegativeMarking"
+                    checked={hasNegativeMarking}
+                    onChange={(e) => setHasNegativeMarking(e.target.checked)}
+                    className="w-4 h-4 text-black border-gray-300 focus:ring-black"
+                  />
+                  <label
+                    htmlFor="hasNegativeMarking"
+                    className="ml-3 text-sm font-semibold text-black"
+                  >
+                    Enable negative marking for wrong answers
+                  </label>
+                </div>
+              </div>
+              {hasNegativeMarking && (
+                <div className="mt-4 p-4 bg-gray-50 border border-gray-200">
+                  <div className="space-y-3">
+                    <p className="text-sm text-gray-700">
+                      <strong>Note:</strong> Students will lose marks for incorrect answers.
+                    </p>
+                    <div>
+                      <label className="block text-sm font-semibold text-black mb-2">
+                        Negative Marking Value (per wrong answer)
+                      </label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="number"
+                          min="0"
+                          max="1"
+                          step="0.01"
+                          value={negativeMarkingValue}
+                          onChange={(e) => setNegativeMarkingValue(parseFloat(e.target.value) || 0)}
+                          className="w-24 px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-black focus:border-black text-sm"
+                        />
+                        <span className="text-sm text-gray-600">marks</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Recommended: 0.25 (1/4th of a mark per wrong answer)
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

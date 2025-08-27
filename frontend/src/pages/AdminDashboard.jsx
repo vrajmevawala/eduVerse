@@ -100,6 +100,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
   const [contests, setContests] = useState([]);
   const [showCreateQuestion, setShowCreateQuestion] = useState(false);
   const [showCreateContest, setShowCreateContest] = useState(false);
+  const [editingContestId, setEditingContestId] = useState(null);
   const [userActivities, setUserActivities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -157,7 +158,8 @@ const AdminDashboard = ({ user, onNavigate }) => {
     if (selectedTab === 'contests') {
       fetch('/api/testseries', { credentials: 'include' })
         .then(res => res.json())
-        .then(data => setAllContests(data.testSeries || []));
+        .then(data => setAllContests(data.testSeries || []))
+        .catch(err => console.error('Error fetching contests:', err));
     }
   }, [selectedTab]);
 
@@ -1703,7 +1705,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
 
         {selectedTab === 'createContest' && (
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <CreateContest />
+            <CreateContest contestId={editingContestId} embedded={true} onClose={() => { setEditingContestId(null); setSelectedTab('contests'); }} />
           </div>
         )}
 
@@ -2216,7 +2218,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                   <option value="without">Without Code</option>
                 </select>
                 <button
-                  onClick={() => setSelectedTab('createContest')}
+                  onClick={() => { setEditingContestId(null); setSelectedTab('createContest'); }}
                   className="flex items-center space-x-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
                 >
                   <Plus className="w-4 h-4" />
@@ -2288,7 +2290,16 @@ const AdminDashboard = ({ user, onNavigate }) => {
                         <td className="py-2 px-3">
                           <input type="checkbox" checked={selectedContestIds?.includes(contest.id)} onChange={() => toggleSelectContest(contest.id)} />
                         </td>
-                        <td className="py-2 px-3 font-semibold">{contest.title}</td>
+                        <td className="py-2 px-3">
+                          <div>
+                            <div className="font-semibold">{contest.title}</div>
+                            {contest.hasNegativeMarking && (
+                              <div className="text-xs text-red-600 mt-1">
+                                Negative Marking: {contest.negativeMarkingValue} per wrong answer
+                              </div>
+                            )}
+                          </div>
+                        </td>
                         <td className="py-2 px-3">{new Date(contest.startTime).toLocaleString()}</td>
                         <td className="py-2 px-3">{new Date(contest.endTime).toLocaleString()}</td>
                         <td className="py-2 px-3 font-mono text-blue-700">{contest.requiresCode ? contest.contestCode : '-'}</td>
@@ -2304,7 +2315,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                         <td className="py-2 px-3">{contest.creator?.fullName || 'Unknown'}</td>
                         <td className="py-2 px-3">
                           <div className="flex items-center gap-3">
-                            <button onClick={() => navigate(`/edit-contest/${contest.id}`)} title="Edit">
+                            <button onClick={() => { setEditingContestId(contest.id); setSelectedTab('createContest'); }} title="Edit">
                               <Pencil className="w-5 h-5 text-gray-800" />
                             </button>
                             <button onClick={() => handleDeleteContest(contest)} title="Delete">

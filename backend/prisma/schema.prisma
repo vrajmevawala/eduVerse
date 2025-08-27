@@ -54,6 +54,8 @@ model TestSeries {
   endTime           DateTime
   requiresCode      Boolean           @default(false)
   contestCode       String?           @unique
+  hasNegativeMarking Boolean          @default(false)
+  negativeMarkingValue Float          @default(0.25)
   participations    Participation[]   @relation("TestSeriesParticipation")
   studentActivities StudentActivity[] @relation("TestSeriesToStudentActivity")
   creator           User              @relation("UserTestSeries", fields: [createdBy], references: [id], onDelete: Cascade)

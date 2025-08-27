@@ -20,7 +20,7 @@ const generateContestCode = () => {
 // Create a new TestSeries (admin/moderator only)
 export const createTestSeries = async (req, res) => {
   try {
-    const { title, questionIds, startTime, endTime, requiresCode } = req.body;
+    const { title, questionIds, startTime, endTime, requiresCode, hasNegativeMarking, negativeMarkingValue } = req.body;
     const userId = req.user.id;
     const userRole = req.user.role;
 
@@ -49,6 +49,11 @@ export const createTestSeries = async (req, res) => {
     }
 
     // Create TestSeries
+    console.log('Creating test series with negative marking:', {
+      hasNegativeMarking,
+      negativeMarkingValue
+    });
+    
     const testSeries = await prisma.testSeries.create({
       data: {
         title,
@@ -56,6 +61,8 @@ export const createTestSeries = async (req, res) => {
         endTime: new Date(endTime),
         requiresCode: requiresCode || false,
         contestCode,
+        hasNegativeMarking: hasNegativeMarking || false,
+        negativeMarkingValue: negativeMarkingValue || 0.25,
         createdBy: userId,
         questions: {
           connect: questionIds.map(id => ({ id })),
@@ -116,6 +123,8 @@ export const getAllTestSeries = async (req, res) => {
       endTime: t.endTime,
       requiresCode: t.requiresCode,
       contestCode: t.contestCode,
+      hasNegativeMarking: t.hasNegativeMarking,
+      negativeMarkingValue: t.negativeMarkingValue,
       participantsCount: t._count?.participations || 0,
       creator: t.creator
     }));
@@ -286,19 +295,31 @@ export const submitTestSeriesAnswers = async (req, res) => {
     
 
     
-    // Calculate score - only count questions with actual answers
+    // Calculate score with negative marking support
     let score = 0;
     let attempted = 0;
+    let negativeMarks = 0;
     const questionResults = [];
+    
+    // Debug logging
+    console.log('TestSeries negative marking settings:', {
+      hasNegativeMarking: testSeries.hasNegativeMarking,
+      negativeMarkingValue: testSeries.negativeMarkingValue
+    });
     
     answers.forEach(ans => {
       const hasAnswer = ans.selectedOption && ans.selectedOption.trim() !== '' && ans.selectedOption !== 'null';
       
       if (hasAnswer) {
         attempted++;
-        // Check if the selected answer matches any of the correct answers exactly
-        if (correctMap[ans.questionId] && correctMap[ans.questionId].includes(ans.selectedOption.trim())) {
+        const isCorrect = correctMap[ans.questionId] && correctMap[ans.questionId].includes(ans.selectedOption.trim());
+        
+        if (isCorrect) {
           score++;
+        } else if (testSeries.hasNegativeMarking) {
+          // Apply negative marking for wrong answers
+          negativeMarks += testSeries.negativeMarkingValue;
+          console.log(`Wrong answer for question ${ans.questionId}: adding ${testSeries.negativeMarkingValue} negative marks`);
         }
       }
       
@@ -310,8 +331,19 @@ export const submitTestSeriesAnswers = async (req, res) => {
         userAnswer: ans.selectedOption || '',
         correctAnswer: (correctMap[ans.questionId] || []).join(', '),
         isCorrect: hasAnswer && (correctMap[ans.questionId] || []).includes(ans.selectedOption.trim()),
-        isAttempted: hasAnswer
+        isAttempted: hasAnswer,
+        negativeMarks: hasAnswer && !(correctMap[ans.questionId] || []).includes(ans.selectedOption.trim()) && testSeries.hasNegativeMarking ? testSeries.negativeMarkingValue : 0
       });
+    });
+    
+    // Calculate final score (correct answers minus negative marks)
+    const finalScore = Math.max(0, score - negativeMarks);
+    
+    console.log('Score calculation:', {
+      score,
+      negativeMarks,
+      finalScore,
+      totalQuestions: testSeries.questions.length
     });
     
     // Get current participation to check violations
@@ -361,8 +393,8 @@ export const submitTestSeriesAnswers = async (req, res) => {
       });
     }
     
-    // Send performance notification for high scores (80% or above)
-    const percentage = Math.round((score / testSeries.questions.length) * 100);
+    // Send performance notification for high scores (80% or above) - use final score for percentage
+    const percentage = Math.round((finalScore / testSeries.questions.length) * 100);
     const notificationService = getNotificationService(req);
     if (notificationService && percentage >= 80) {
       try {
@@ -374,18 +406,23 @@ export const submitTestSeriesAnswers = async (req, res) => {
     }
 
     res.json({ 
-      score, 
-      correct: score, // Add this for consistency
+      score: finalScore, 
+      correct: score, // Raw correct answers (before negative marking)
       total: testSeries.questions.length,
       attempted,
+      negativeMarks,
+      hasNegativeMarking: testSeries.hasNegativeMarking,
+      negativeMarkingValue: testSeries.negativeMarkingValue,
       timeTaken: timeTaken, // Add time taken to top level
       autoSubmitted,
       violations: currentViolations,
       results: {
         correctAnswers: score,
-        correct: score, // Add this for consistency
+        correct: score, // Raw correct answers (before negative marking)
         totalQuestions: testSeries.questions.length,
         attemptedQuestions: attempted,
+        negativeMarks,
+        finalScore,
         timeTaken: timeTaken, // Calculate time taken in minutes
         questionResults
       }
@@ -406,7 +443,9 @@ export const getUserContestResult = async (req, res) => {
       where: { id: Number(id) },
       select: { 
         startTime: true, 
-        endTime: true, 
+        endTime: true,
+        hasNegativeMarking: true,
+        negativeMarkingValue: true,
         questions: { 
           select: { 
             id: true, 
@@ -485,9 +524,10 @@ export const getUserContestResult = async (req, res) => {
       questionMap[q.id] = q;
     });
 
-    // Calculate stats
+    // Calculate stats with negative marking support
     let correct = 0;
     let attempted = 0;
+    let negativeMarks = 0;
     const questionResults = [];
     
     // Calculate time taken if participation exists
@@ -503,8 +543,12 @@ export const getUserContestResult = async (req, res) => {
       
       if (hasAnswer) {
         attempted++;
-        if ((correctMap[question.id] || []).includes(activity.selectedAnswer)) {
+        const isCorrect = (correctMap[question.id] || []).includes(activity.selectedAnswer);
+        if (isCorrect) {
           correct++;
+        } else if (contest.hasNegativeMarking) {
+          // Apply negative marking for wrong answers
+          negativeMarks += contest.negativeMarkingValue;
         }
       }
       
@@ -515,9 +559,13 @@ export const getUserContestResult = async (req, res) => {
         userAnswer: activity?.selectedAnswer || '',
         correctAnswer: (correctMap[question.id] || []).join(', '),
         isCorrect: hasAnswer && (correctMap[question.id] || []).includes(activity.selectedAnswer),
-        isAttempted: hasAnswer
+        isAttempted: hasAnswer,
+        negativeMarks: hasAnswer && !(correctMap[question.id] || []).includes(activity.selectedAnswer) && contest.hasNegativeMarking ? contest.negativeMarkingValue : 0
       });
     });
+    
+    // Calculate final score (correct answers minus negative marks)
+    const finalScore = Math.max(0, correct - negativeMarks);
     
 
 
@@ -526,6 +574,10 @@ export const getUserContestResult = async (req, res) => {
       attempted,
       correct,
       correctAnswers: correct, // Add this for consistency
+      negativeMarks,
+      hasNegativeMarking: contest.hasNegativeMarking,
+      negativeMarkingValue: contest.negativeMarkingValue,
+      finalScore,
       timeTaken: timeTaken,
       violations: participation?.violations || 0,
       autoSubmitted: participation?.violations >= 2,
@@ -1053,7 +1105,7 @@ export const getUpcomingContests = async (req, res) => {
 export const updateTestSeries = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, startTime, endTime, requiresCode } = req.body;
+    const { title, startTime, endTime, requiresCode, hasNegativeMarking, negativeMarkingValue, questionIds } = req.body;
     const userId = req.user.id;
     const userRole = req.user.role;
 
@@ -1063,7 +1115,8 @@ export const updateTestSeries = async (req, res) => {
 
     // Check if contest exists
     const existingContest = await prisma.testSeries.findUnique({
-      where: { id: Number(id) }
+      where: { id: Number(id) },
+      include: { questions: true }
     });
 
     if (!existingContest) {
@@ -1086,13 +1139,39 @@ export const updateTestSeries = async (req, res) => {
         title: title.trim(),
         startTime: newStartTime,
         endTime: newEndTime,
-        requiresCode: requiresCode || false
+        requiresCode: requiresCode || false,
+        hasNegativeMarking: hasNegativeMarking || false,
+        negativeMarkingValue: negativeMarkingValue || 0.25,
+        ...(questionIds && {
+          questions: {
+            set: [], // Clear existing questions
+            connect: questionIds.map(id => ({ id })) // Connect new questions
+          }
+        })
       },
       include: { 
         questions: { select: { id: true, question: true, options: true, level: true, category: true, subcategory: true } }, 
         creator: true 
       },
     });
+
+    // Handle question visibility if questions were updated
+    if (questionIds) {
+      // Make old questions visible again
+      const oldQuestionIds = existingContest.questions.map(q => q.id);
+      if (oldQuestionIds.length > 0) {
+        await prisma.question.updateMany({
+          where: { id: { in: oldQuestionIds } },
+          data: { visibility: true }
+        });
+      }
+      
+      // Hide new questions
+      await prisma.question.updateMany({
+        where: { id: { in: questionIds } },
+        data: { visibility: false }
+      });
+    }
 
     res.json({ testSeries: updatedContest });
   } catch (error) {

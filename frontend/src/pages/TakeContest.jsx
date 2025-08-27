@@ -270,7 +270,12 @@ const TakeContest = () => {
           questionResults: data.results.questionResults || [],
           hasParticipated: true,
           violations: data.violations || 0,
-          autoSubmitted: data.autoSubmitted || false
+          autoSubmitted: data.autoSubmitted || false,
+          // Add negative marking data
+          negativeMarks: data.negativeMarks || data.results.negativeMarks || 0,
+          hasNegativeMarking: data.hasNegativeMarking || false,
+          negativeMarkingValue: data.negativeMarkingValue || 0,
+          finalScore: data.finalScore || data.results.finalScore || data.score || data.correct || 0
         };
         
         navigate(`/contest-results/${contestId}?fromSubmission=true`, { 
@@ -716,6 +721,19 @@ const TakeContest = () => {
           <Trophy className="w-16 h-16 mx-auto mb-6 text-black" />
           <h2 className="text-2xl font-bold mb-4">Ready to Start?</h2>
           <p className="text-gray-600 mb-8">Click below to begin the contest. Full screen mode will be activated if supported by your browser.</p>
+          {contest?.hasNegativeMarking && (
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center space-x-2 mb-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                <h4 className="text-lg font-semibold text-yellow-800">Negative Marking Enabled</h4>
+              </div>
+              <p className="text-yellow-700">
+                This contest uses negative marking. Each wrong answer will deduct {contest.negativeMarkingValue} marks from your score.
+                <br />
+                <span className="font-semibold">Think carefully before answering!</span>
+              </p>
+            </div>
+          )}
           <button
             onClick={handleStartContest}
             disabled={hasSubmitted}

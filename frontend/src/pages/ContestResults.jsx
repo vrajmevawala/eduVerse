@@ -211,7 +211,11 @@ const ContestResults = () => {
   
   const score = finalResults.correct || finalResults.correctAnswers || 0;
   const totalQuestions = finalResults.totalQuestions || 0;
-  const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+  const negativeMarks = finalResults.negativeMarks || 0;
+  const finalScore = finalResults.finalScore || finalResults.score || score;
+  const hasNegativeMarking = finalResults.hasNegativeMarking || false;
+  const negativeMarkingValue = finalResults.negativeMarkingValue || 0;
+  const percentage = totalQuestions > 0 ? Math.round((finalScore / totalQuestions) * 100) : 0;
   const timeTaken = finalResults.timeTaken || 0;
   
   // Debug logging for troubleshooting
@@ -258,11 +262,22 @@ const ContestResults = () => {
           </h2>
           
           {finalResults?.hasParticipated ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {/* Score */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {/* Correct Answers */}
               <div className="text-center p-6 bg-gray-50 border border-gray-200">
-                <div className="text-4xl font-bold text-black mb-2">{score}/{totalQuestions}</div>
+                <div className="text-4xl font-bold text-green-600 mb-2">{score}/{totalQuestions}</div>
                 <div className="text-sm text-gray-600">Correct Answers</div>
+              </div>
+              
+              {/* Final Score */}
+              <div className="text-center p-6 bg-gray-50 border border-gray-200">
+                <div className="text-4xl font-bold text-black mb-2">{finalScore.toFixed(2)}/{totalQuestions}</div>
+                <div className="text-sm text-gray-600">Final Score</div>
+                {hasNegativeMarking && negativeMarks > 0 && (
+                  <div className="text-xs text-red-600 mt-1">
+                    -{negativeMarks.toFixed(2)} negative marks
+                  </div>
+                )}
               </div>
               
               {/* Percentage */}
@@ -307,11 +322,27 @@ const ContestResults = () => {
             </div>
           )}
 
+          {/* Negative Marking Information - Only show for participants */}
+          {finalResults?.hasParticipated && hasNegativeMarking && (
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center space-x-2 mb-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                <h4 className="text-lg font-semibold text-yellow-800">Negative Marking Applied</h4>
+              </div>
+              <p className="text-yellow-700">
+                This contest uses negative marking. Each wrong answer deducts {negativeMarkingValue} marks from your score.
+                {negativeMarks > 0 && (
+                  <span className="font-semibold"> Total negative marks: {negativeMarks.toFixed(2)}</span>
+                )}
+              </p>
+            </div>
+          )}
+
           {/* Violation Information - Only show for participants */}
           {finalResults?.hasParticipated && finalResults.violations > 0 && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center space-x-2 mb-2">
-                <alertTriangle className="w-5 h-5 text-red-600" />
+                <AlertTriangle className="w-5 h-5 text-red-600" />
                 <h4 className="text-lg font-semibold text-red-800">Security Violations</h4>
               </div>
               <p className="text-red-700">
@@ -383,6 +414,9 @@ const ContestResults = () => {
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
                             <XCircle className="w-4 h-4 mr-1" />
                             Wrong
+                            {hasNegativeMarking && result.negativeMarks > 0 && (
+                              <span className="ml-1 text-xs">(-{result.negativeMarks.toFixed(2)})</span>
+                            )}
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
@@ -398,8 +432,8 @@ const ContestResults = () => {
                       
                       <div className="space-y-2">
                         {Array.isArray(options) ? options.map((option, index) => {
-                          const isCorrect = Array.isArray(result.correctAnswers) && result.correctAnswers.includes(option);
-                          const isSelected = userAnswer === option; // Fix: Check if this option was selected by user
+                          const isCorrect = Array.isArray(result.correctAnswers) ? result.correctAnswers.includes(option) : option === correctAnswer;
+                          const isSelected = Array.isArray(userAnswer) ? userAnswer.includes(option) : userAnswer === option;
                           const isWrongSelection = isSelected && !isCorrect;
                           
                           return (
@@ -435,7 +469,7 @@ const ContestResults = () => {
                           );
                         }) : Object.entries(options).map(([key, value]) => {
                           const isCorrect = Array.isArray(result.correctAnswers) ? result.correctAnswers.includes(value) : key === correctAnswer;
-                          const isSelected = userAnswer === value; // Fix: Check if this option was selected by user
+                          const isSelected = Array.isArray(userAnswer) ? userAnswer.includes(value) : userAnswer === key || userAnswer === value;
                           const isWrongSelection = isSelected && !isCorrect;
                           
                           return (
@@ -629,4 +663,4 @@ const ContestResults = () => {
   );
 };
 
-export default ContestResults; 
+export default ContestResults;

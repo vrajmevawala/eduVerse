@@ -909,9 +909,9 @@ const Result = () => {
                             key={index}
                             className={`p-6 border rounded-lg ${
                               detail.isCorrect 
-                                ? 'border-gray-900 bg-white' 
+                                ? 'border-green-500 bg-white' 
                                 : isAttempted
-                                ? 'border-gray-300 bg-white'
+                                ? 'border-red-500 bg-white'
                                 : 'border-gray-200 bg-gray-50'
                             }`}
                           >
@@ -921,12 +921,12 @@ const Result = () => {
                                   Question {index + 1}
                                 </span>
                                 {detail.isCorrect ? (
-                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-900 text-white">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500 text-white">
                                     <CheckCircle className="w-4 h-4 mr-1" />
                                     Correct
                                   </span>
                                 ) : isAttempted ? (
-                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-300 text-gray-900">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-500 text-white">
                                     <XCircle className="w-4 h-4 mr-1" />
                                     Wrong
                                   </span>
@@ -945,8 +945,8 @@ const Result = () => {
                               {Array.isArray(options) ? options.length > 0 && (
                                 <div className="space-y-2">
                                   {options.map((option, index) => {
-                                    const isCorrect = Array.isArray(correctAnswer) && correctAnswer.includes(option);
-                                    const isSelected = userAnswer === option;
+                                    const isCorrect = Array.isArray(correctAnswer) ? correctAnswer.includes(option) : option === correctAnswer;
+                                    const isSelected = Array.isArray(userAnswer) ? userAnswer.includes(option) : userAnswer === option;
                                     const isWrongSelection = isSelected && !isCorrect;
                                     
                                     return (
@@ -954,28 +954,28 @@ const Result = () => {
                                         key={index}
                                         className={`p-3 border rounded-lg ${
                                           isCorrect 
-                                            ? 'border-gray-900 bg-gray-900 text-white' 
+                                            ? 'border-green-500 bg-green-100 text-green-800' 
                                             : isWrongSelection
-                                            ? 'border-gray-300 bg-gray-300 text-gray-900'
+                                            ? 'border-red-500 bg-red-100 text-red-800'
                                             : 'border-gray-200 bg-white text-gray-700'
                                         }`}
                                       >
                                         <div className="flex items-center space-x-3">
                                           <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium ${
                                             isCorrect 
-                                              ? 'bg-gray-900 text-white' 
+                                              ? 'bg-green-500 text-white' 
                                               : isWrongSelection
-                                              ? 'bg-gray-300 text-gray-900'
+                                              ? 'bg-red-500 text-white'
                                               : 'bg-gray-200 text-gray-600'
                                           }`}>
                                             {String.fromCharCode(65 + index)}
                                           </span>
                                           <span className="flex-1">{option}</span>
                                           {isCorrect && (
-                                            <CheckCircle className="w-5 h-5 text-gray-900" />
+                                            <CheckCircle className="w-5 h-5 text-green-600" />
                                           )}
                                           {isWrongSelection && (
-                                            <XCircle className="w-5 h-5 text-gray-900" />
+                                            <XCircle className="w-5 h-5 text-red-600" />
                                           )}
                                         </div>
                                       </div>
@@ -988,7 +988,7 @@ const Result = () => {
                                     const isCorrect = Array.isArray(correctAnswer) 
                                       ? correctAnswer.includes(value)
                                       : key === correctAnswer;
-                                    const isSelected = key === userAnswer;
+                                    const isSelected = Array.isArray(userAnswer) ? userAnswer.includes(value) : userAnswer === key || userAnswer === value;
                                     const isWrongSelection = isSelected && !isCorrect;
                                     
                                     return (
@@ -996,28 +996,28 @@ const Result = () => {
                                         key={key}
                                         className={`p-3 border rounded-lg ${
                                           isCorrect 
-                                            ? 'border-gray-900 bg-gray-900 text-white' 
+                                            ? 'border-green-500 bg-green-100 text-green-800' 
                                             : isWrongSelection
-                                            ? 'border-gray-300 bg-gray-300 text-gray-900'
+                                            ? 'border-red-500 bg-red-100 text-red-800'
                                             : 'border-gray-200 bg-white text-gray-700'
                                         }`}
                                       >
                                         <div className="flex items-center space-x-3">
                                           <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium ${
                                             isCorrect 
-                                              ? 'bg-gray-900 text-white' 
+                                              ? 'bg-green-500 text-white' 
                                               : isWrongSelection
-                                              ? 'bg-gray-300 text-gray-900'
+                                              ? 'bg-red-500 text-white'
                                               : 'border-gray-200 text-gray-600'
                                           }`}>
                                             {key.toUpperCase()}
                                           </span>
                                           <span className="flex-1">{value}</span>
                                           {isCorrect && (
-                                            <CheckCircle className="w-5 h-5 text-gray-900" />
+                                            <CheckCircle className="w-5 h-5 text-green-600" />
                                           )}
                                           {isWrongSelection && (
-                                            <XCircle className="w-5 h-5 text-gray-900" />
+                                            <XCircle className="w-5 h-5 text-red-600" />
                                           )}
                                         </div>
                                       </div>
@@ -1043,7 +1043,7 @@ const Result = () => {
                               )}
                               {!detail.isCorrect && isAttempted && (
                                 <p>
-                                  <span className="font-medium text-gray-900">Correct Answer:</span> {
+                                  <span className="font-medium text-green-600">Correct Answer:</span> {
                                     Array.isArray(correctAnswer) 
                                       ? correctAnswer.join(', ')
                                       : correctAnswer 
