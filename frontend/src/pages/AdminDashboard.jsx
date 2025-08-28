@@ -1843,9 +1843,9 @@ const AdminDashboard = ({ user, onNavigate }) => {
                   </button>
 
                   {/* Tooltip Info Button */}
-                  {/* <div className="relative group">
+                  <div className="relative group">
                     <button className="mt-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-bold italic">
-                      𝒾
+                      i
                     </button>
                     <div className="absolute left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-black text-white text-xs p-3 rounded-lg w-64">
                       <p className="whitespace-pre-line text-left">
@@ -1861,7 +1861,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                         }`}
                       </p>
                     </div>
-                  </div> */}
+                  </div>
                 </div>
 
                   {jsonUploadStatus && <p className="mt-2 text-sm text-gray-600">{jsonUploadStatus}</p>}
@@ -1927,6 +1927,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                   <th className="py-2 px-3">Category</th>
                   <th className="py-2 px-3">Subcategory</th>
                   <th className="py-2 px-3">Level</th>
+                  <th className="py-2 px-3">Score</th>
                   <th className="py-2 px-3">Actions</th>
                 </tr>
               </thead>
@@ -1978,6 +1979,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                         <td className="py-2 px-3">{q.category}</td>
                         <td className="py-2 px-3">{q.subcategory}</td>
                         <td className="py-2 px-3">{q.level}</td>
+                        <td className="py-2 px-3">{Array.isArray(q.correctAnswers) ? q.correctAnswers.length : (q.correctAns ? 1 : 0)}</td>
                         <td className="py-2 px-3 flex gap-2">
                           <button
                             onClick={() => handleEditQuestion(q)}

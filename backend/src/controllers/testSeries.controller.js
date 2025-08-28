@@ -7,6 +7,21 @@ const getNotificationService = (req) => {
   return req.app.get('notificationService');
 };
 
+// Utility: convert decimal negative marking value to a human-friendly ratio like "1/4"
+const toNegativeRatioString = (value) => {
+  if (!value || value <= 0) return '0';
+  // Try to express as 1/n up to a reasonable denominator
+  const maxDenominator = 10;
+  for (let d = 1; d <= maxDenominator; d++) {
+    const candidate = 1 / d;
+    if (Math.abs(candidate - value) < 1e-6) {
+      return `1/${d}`;
+    }
+  }
+  // Fallback: show decimal up to 2 decimals
+  return String(Number(value.toFixed(2)));
+};
+
 // Generate a unique contest code
 const generateContestCode = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -275,7 +290,8 @@ export const submitTestSeriesAnswers = async (req, res) => {
             id: true, 
             correctAnswers: true,
             question: true,
-            options: true
+            options: true,
+            score: true
           }
         }
       }
@@ -295,7 +311,7 @@ export const submitTestSeriesAnswers = async (req, res) => {
     
 
     
-    // Calculate score with negative marking support
+    // Calculate score with negative marking support (per-question deduction by ratio)
     let score = 0;
     let attempted = 0;
     let negativeMarks = 0;
@@ -317,8 +333,10 @@ export const submitTestSeriesAnswers = async (req, res) => {
         if (isCorrect) {
           score++;
         } else if (testSeries.hasNegativeMarking) {
-          // Apply negative marking for wrong answers
-          negativeMarks += testSeries.negativeMarkingValue;
+          // Apply negative marking for wrong answers using per-question ratio
+          const ratio = Number(testSeries.negativeMarkingValue) || 0;
+          const qScore = Number(questionMap[ans.questionId]?.score) || 1;
+          negativeMarks += ratio * qScore;
           console.log(`Wrong answer for question ${ans.questionId}: adding ${testSeries.negativeMarkingValue} negative marks`);
         }
       }
@@ -332,7 +350,7 @@ export const submitTestSeriesAnswers = async (req, res) => {
         correctAnswer: (correctMap[ans.questionId] || []).join(', '),
         isCorrect: hasAnswer && (correctMap[ans.questionId] || []).includes(ans.selectedOption.trim()),
         isAttempted: hasAnswer,
-        negativeMarks: hasAnswer && !(correctMap[ans.questionId] || []).includes(ans.selectedOption.trim()) && testSeries.hasNegativeMarking ? testSeries.negativeMarkingValue : 0
+        negativeMarks: hasAnswer && !(correctMap[ans.questionId] || []).includes(ans.selectedOption.trim()) && testSeries.hasNegativeMarking ? ((Number(testSeries.negativeMarkingValue) || 0) * (Number(questionMap[ans.questionId]?.score) || 1)) : 0
       });
     });
     
@@ -413,6 +431,7 @@ export const submitTestSeriesAnswers = async (req, res) => {
       negativeMarks,
       hasNegativeMarking: testSeries.hasNegativeMarking,
       negativeMarkingValue: testSeries.negativeMarkingValue,
+      negativeMarkingRatio: toNegativeRatioString(Number(testSeries.negativeMarkingValue) || 0),
       timeTaken: timeTaken, // Add time taken to top level
       autoSubmitted,
       violations: currentViolations,
@@ -422,6 +441,7 @@ export const submitTestSeriesAnswers = async (req, res) => {
         totalQuestions: testSeries.questions.length,
         attemptedQuestions: attempted,
         negativeMarks,
+        negativeMarkingRatio: toNegativeRatioString(Number(testSeries.negativeMarkingValue) || 0),
         finalScore,
         timeTaken: timeTaken, // Calculate time taken in minutes
         questionResults
@@ -548,7 +568,8 @@ export const getUserContestResult = async (req, res) => {
           correct++;
         } else if (contest.hasNegativeMarking) {
           // Apply negative marking for wrong answers
-          negativeMarks += contest.negativeMarkingValue;
+          const qScore = Number(question.score) || 1;
+          negativeMarks += (Number(contest.negativeMarkingValue) || 0) * qScore;
         }
       }
       
@@ -560,7 +581,7 @@ export const getUserContestResult = async (req, res) => {
         correctAnswer: (correctMap[question.id] || []).join(', '),
         isCorrect: hasAnswer && (correctMap[question.id] || []).includes(activity.selectedAnswer),
         isAttempted: hasAnswer,
-        negativeMarks: hasAnswer && !(correctMap[question.id] || []).includes(activity.selectedAnswer) && contest.hasNegativeMarking ? contest.negativeMarkingValue : 0
+        negativeMarks: hasAnswer && !(correctMap[question.id] || []).includes(activity.selectedAnswer) && contest.hasNegativeMarking ? ((Number(contest.negativeMarkingValue) || 0) * (Number(question.score) || 1)) : 0
       });
     });
     
@@ -577,6 +598,7 @@ export const getUserContestResult = async (req, res) => {
       negativeMarks,
       hasNegativeMarking: contest.hasNegativeMarking,
       negativeMarkingValue: contest.negativeMarkingValue,
+      negativeMarkingRatio: toNegativeRatioString(Number(contest.negativeMarkingValue) || 0),
       finalScore,
       timeTaken: timeTaken,
       violations: participation?.violations || 0,
@@ -628,10 +650,13 @@ export const getContestLeaderboard = async (req, res) => {
       select: { 
         startTime: true,
         endTime: true,
+        hasNegativeMarking: true,
+        negativeMarkingValue: true,
         questions: { 
           select: { 
             id: true, 
-            correctAnswers: true
+            correctAnswers: true,
+            score: true
           } 
         } 
       }
@@ -657,7 +682,23 @@ export const getContestLeaderboard = async (req, res) => {
     // Create leaderboard entries
     const leaderboard = participations.map(participation => {
       const userScore = userScores[participation.sid] || { correct: 0, attempted: 0 };
-      const percentage = totalQuestions > 0 ? (userScore.correct / totalQuestions) * 100 : 0;
+      const wrongAnswers = Math.max(0, (userScore.attempted || 0) - (userScore.correct || 0));
+      // Compute total negative marks weighted by per-question score using activities
+      let negativeMarks = 0;
+      if (contest.hasNegativeMarking) {
+        const ratio = Number(contest.negativeMarkingValue) || 0;
+        const activityForUser = allActivities.filter(a => a.sid === participation.sid);
+        activityForUser.forEach(a => {
+          const hasAns = a.selectedAnswer && a.selectedAnswer.trim() !== '' && a.selectedAnswer !== 'null';
+          const isCorrect = hasAns && Array.isArray(correctMap[a.qid]) && correctMap[a.qid].includes(a.selectedAnswer);
+          if (hasAns && !isCorrect) {
+            const qScore = Number(contest.questions.find(q => q.id === a.qid)?.score) || 1;
+            negativeMarks += ratio * qScore;
+          }
+        });
+      }
+      const finalScore = Math.max(0, (userScore.correct || 0) - negativeMarks);
+      const percentage = totalQuestions > 0 ? (finalScore / totalQuestions) * 100 : 0;
       const accuracy = userScore.attempted > 0 ? (userScore.correct / userScore.attempted) * 100 : 0;
       
       // Debug logging for time calculation
@@ -747,6 +788,9 @@ export const getContestLeaderboard = async (req, res) => {
         userName: participation.user.fullName,
         userEmail: participation.user.email,
         correct: userScore.correct,
+        finalScore,
+        negativeMarks,
+        hasNegativeMarking: contest.hasNegativeMarking,
         attempted: userScore.attempted,
         totalQuestions: totalQuestions,
         percentage: Math.round(percentage * 100) / 100,
@@ -758,7 +802,9 @@ export const getContestLeaderboard = async (req, res) => {
 
     // Sort by score (descending), then by submission time (ascending for tie-break)
     leaderboard.sort((a, b) => {
-      if (b.correct !== a.correct) return b.correct - a.correct;
+      const aScore = contest.hasNegativeMarking ? a.finalScore : a.correct;
+      const bScore = contest.hasNegativeMarking ? b.finalScore : b.correct;
+      if (bScore !== aScore) return bScore - aScore;
       if (a.submittedAt && b.submittedAt) {
         return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
       }
@@ -800,12 +846,15 @@ export const getContestStats = async (req, res) => {
     const contest = await prisma.testSeries.findUnique({
       where: { id: Number(id) },
       select: { 
+        hasNegativeMarking: true,
+        negativeMarkingValue: true,
         questions: { 
           select: { 
             id: true, 
             correctAnswers: true,
             question: true,
-            options: true
+            options: true,
+            score: true
           } 
         } 
       }
@@ -828,8 +877,21 @@ export const getContestStats = async (req, res) => {
       if (hasAnswer && Array.isArray(correctMap[act.qid]) && correctMap[act.qid].includes(act.selectedAnswer)) userScores[act.sid].correct++;
     });
 
-    // Build array of scores
-    const scores = Object.values(userScores).map(u => u.correct);
+    // Build array of scores (apply negative marking if enabled)
+    const scores = Object.values(userScores).map(u => {
+      const attempted = u.attempted || 0;
+      const correct = u.correct || 0;
+      const wrong = Math.max(0, attempted - correct);
+      let negative = 0;
+      if (contest.hasNegativeMarking) {
+        const ratio = Number(contest.negativeMarkingValue) || 0;
+        // Without per-user mapping here, approximate by weighting with average question score
+        const avgScore = contest.questions.length ? (contest.questions.reduce((s, q) => s + (Number(q.score) || 1), 0) / contest.questions.length) : 1;
+        negative = wrong * ratio * avgScore;
+      }
+      const finalScore = Math.max(0, correct - negative);
+      return finalScore;
+    });
 
     // Calculate average
     const average = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
@@ -1375,6 +1437,12 @@ export const getContestParticipants = async (req, res) => {
   try {
     const { id } = req.params;
     
+    // Fetch contest settings to determine negative marking
+    const contestConfig = await prisma.testSeries.findUnique({
+      where: { id: Number(id) },
+      select: { hasNegativeMarking: true, negativeMarkingValue: true }
+    });
+
     const participants = await prisma.participation.findMany({
       where: {
         testSeriesId: Number(id),
@@ -1428,7 +1496,21 @@ export const getContestParticipants = async (req, res) => {
             Array.isArray(a.question.correctAnswers) && 
             a.question.correctAnswers.includes(a.selectedAnswer)
           ).length;
-          const percentage = totalQuestions > 0 ? ((correctAnswers / totalQuestions) * 100).toFixed(1) : '0';
+          const attempted = answers.filter(a => a.selectedAnswer && a.selectedAnswer.trim() !== '' && a.selectedAnswer !== 'null').length;
+          let negative = 0;
+          if (contestConfig?.hasNegativeMarking) {
+            const ratio = Number(contestConfig.negativeMarkingValue) || 0;
+            answers.forEach(a => {
+              const hasAns = a.selectedAnswer && a.selectedAnswer.trim() !== '' && a.selectedAnswer !== 'null';
+              const isCorrect = hasAns && Array.isArray(a.question.correctAnswers) && a.question.correctAnswers.includes(a.selectedAnswer);
+              if (hasAns && !isCorrect) {
+                const qScore = Number(a.question?.score) || 1;
+                negative += ratio * qScore;
+              }
+            });
+          }
+          const finalScore = Math.max(0, correctAnswers - negative);
+          const percentage = totalQuestions > 0 ? ((finalScore / totalQuestions) * 100).toFixed(1) : '0';
           const timeTaken = participation.submittedAt && participation.startTime 
             ? Math.round((new Date(participation.submittedAt) - new Date(participation.startTime)) / (1000 * 60))
             : 0;
@@ -1438,7 +1520,7 @@ export const getContestParticipants = async (req, res) => {
             userId: participation.user?.id || 'unknown',
             name: participation.user?.fullName || 'Unknown User',
             email: participation.user?.email || 'No email',
-            score: correctAnswers,
+            score: finalScore,
             totalQuestions,
             percentage: parseFloat(percentage),
             accuracy: parseFloat(percentage),
@@ -1498,13 +1580,16 @@ export const getParticipantAnswers = async (req, res) => {
           select: {
             id: true,
             title: true,
+            hasNegativeMarking: true,
+            negativeMarkingValue: true,
             questions: {
               select: {
                 id: true,
                 question: true,
                 options: true,
                 correctAnswers: true,
-                explanation: true
+                explanation: true,
+                score: true
               }
             }
           }
@@ -1532,7 +1617,16 @@ export const getParticipantAnswers = async (req, res) => {
       const ans = answersByQuestionId.get(q.id);
       return acc + (ans && Array.isArray(q.correctAnswers) && q.correctAnswers.includes(ans) ? 1 : 0);
     }, 0);
-    const percentage = totalQuestions > 0 ? ((correctAnswers / totalQuestions) * 100).toFixed(1) : '0';
+    // Apply negative marking if enabled
+    const attempted = participation.testSeries.questions.reduce((acc, q) => {
+      const val = answersByQuestionId.get(q.id);
+      const hasAnswer = typeof val === 'string' ? (val.trim() !== '' && val !== 'null') : !!val;
+      return acc + (hasAnswer ? 1 : 0);
+    }, 0);
+    const wrong = Math.max(0, attempted - correctAnswers);
+    const negative = participation.testSeries.hasNegativeMarking ? (wrong * (Number(participation.testSeries.negativeMarkingValue) || 0)) : 0;
+    const finalScore = Math.max(0, correctAnswers - negative);
+    const percentage = totalQuestions > 0 ? ((finalScore / totalQuestions) * 100).toFixed(1) : '0';
     const timeTaken = participation.submittedAt && participation.startTime 
       ? Math.round((new Date(participation.submittedAt) - new Date(participation.startTime)) / 1000 / 60)
       : 0;
@@ -1559,7 +1653,7 @@ export const getParticipantAnswers = async (req, res) => {
         userId: participation.user?.id || 'unknown',
         name: participation.user?.fullName || 'Unknown User',
         email: participation.user?.email || 'No email',
-        score: correctAnswers,
+        score: finalScore,
         totalQuestions,
         percentage: parseFloat(percentage),
         accuracy: parseFloat(percentage),

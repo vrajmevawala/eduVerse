@@ -215,6 +215,7 @@ const ContestResults = () => {
   const finalScore = finalResults.finalScore || finalResults.score || score;
   const hasNegativeMarking = finalResults.hasNegativeMarking || false;
   const negativeMarkingValue = finalResults.negativeMarkingValue || 0;
+  const negativeMarkingRatio = finalResults.negativeMarkingRatio || (negativeMarkingValue === 0.25 ? '1/4' : (negativeMarkingValue ? negativeMarkingValue : '0'));
   const percentage = totalQuestions > 0 ? Math.round((finalScore / totalQuestions) * 100) : 0;
   const timeTaken = finalResults.timeTaken || 0;
   
@@ -330,7 +331,7 @@ const ContestResults = () => {
                 <h4 className="text-lg font-semibold text-yellow-800">Negative Marking Applied</h4>
               </div>
               <p className="text-yellow-700">
-                This contest uses negative marking. Each wrong answer deducts {negativeMarkingValue} marks from your score.
+                This contest uses negative marking. Each wrong answer deducts {negativeMarkingRatio} of a mark.
                 {negativeMarks > 0 && (
                   <span className="font-semibold"> Total negative marks: {negativeMarks.toFixed(2)}</span>
                 )}

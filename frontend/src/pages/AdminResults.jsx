@@ -666,7 +666,7 @@ const AdminResults = ({ user, embedded = false }) => {
                     { id: 'overview', label: 'Overview', icon: BarChart3 },
                     { id: 'performance', label: 'Performance', icon: TrendingUp },
                     { id: 'questions', label: 'Question Analysis', icon: PieChart },
-                    { id: 'categories', label: 'Categories', icon: Activity },
+                    // { id: 'categories', label: 'Categories', icon: Activity },
                     { id: 'results', label: 'Results', icon: FileText }
                   ].map((tab) => {
                     const Icon = tab.icon;
@@ -949,7 +949,7 @@ const AdminResults = ({ user, embedded = false }) => {
                   
 
                   {/* Categories Tab */}
-                  {analysisTab === 'categories' && (
+                  {/* {analysisTab === 'categories' && (
                     <div className="space-y-6">
                       {categoryAnalysis && Object.keys(categoryAnalysis).length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -986,7 +986,7 @@ const AdminResults = ({ user, embedded = false }) => {
                         </div>
                       )}
                     </div>
-                  )}
+                  )} */}
 
                   {/* Results Tab */}
                   {analysisTab === 'results' && (
