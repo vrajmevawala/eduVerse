@@ -1148,11 +1148,11 @@ const AdminDashboard = ({ user, onNavigate }) => {
     { id: 'users', label: 'User Analytics', icon: Users },
     { id: 'resources', label: 'Resources', icon: FileText },
     { id: 'contests', label: 'Contests', icon: Trophy },
+    { id: 'createContest', label: 'Create Contest', icon: Trophy },
     { id: 'results', label: 'Results', icon: BarChart3 },
     { id: 'ai', label: 'AI Assistant', icon: BotIcon },
     { id: 'bookmarks', label: 'Bookmarks', icon: BookmarkIcon },
-    { id: 'notifications', label: 'Notifications', icon: BellIcon },
-    { id: 'createContest', label: 'Create Contest', icon: Trophy },
+    { id: 'notifications', label: 'Notifications', icon: BellIcon }
   ];
 
   useEffect(() => {
@@ -1514,7 +1514,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           <p className="text-gray-600 mt-2">Manage moderators and monitor system performance</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8 mb-5">
           <div className="bg-white p-6 border border-gray-200 rounded-lg flex justify-between items-center">
               <div>
               <p className="text-sm text-gray-500">Total Users</p>

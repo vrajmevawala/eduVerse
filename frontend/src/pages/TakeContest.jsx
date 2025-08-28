@@ -219,7 +219,7 @@ const TakeContest = () => {
         const answerIndex = answers[question.id];
         let selectedOption = '';
         
-        if (answerIndex && answerIndex !== '') {
+        if (answerIndex !== '' && answerIndex !== null && answerIndex !== undefined) {
           // Convert numeric index to actual option text
           if (Array.isArray(question.options)) {
             // New structure: get option text from index
@@ -967,7 +967,7 @@ const TakeContest = () => {
             <div className="grid grid-cols-8 gap-1">
               {questions.map((question, index) => {
                 const isCurrent = index === currentQuestionIndex;
-                const isAnswered = answers[question.id] && answers[question.id] !== '';
+                const isAnswered = (answers[question.id] !== '' && answers[question.id] !== null && answers[question.id] !== undefined);
                 const isVisited = visitedQuestions.has(index);
                 const isMarkedForReview = markedForReview.has(index);
                 

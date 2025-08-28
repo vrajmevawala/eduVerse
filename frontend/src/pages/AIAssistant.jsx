@@ -528,65 +528,7 @@ const AIAssistant = ({ user }) => {
               </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 mt-6">
-              <div className="flex items-center space-x-2 mb-5">
-                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                  <Lightbulb className="w-4 h-4 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">Quick Start</h3>
-              </div>
-              <div className="grid grid-cols-1 gap-3">
-                <button
-                  onClick={() => setNewMessage("Help me with aptitude questions")}
-                  className="w-full flex items-center space-x-3 p-4 text-left bg-gradient-to-r from-blue-50 to-blue-100/50 hover:from-blue-100 hover:to-blue-200/50 rounded-2xl transition-all duration-200 border border-blue-200/50 group"
-                >
-                  <div className="w-8 h-8 bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Target className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-900">Aptitude Help</span>
-                    <p className="text-xs text-gray-600">Get help with math & logical reasoning</p>
-                  </div>
-                </button>
-                <button
-                  onClick={() => setNewMessage("Explain DSA concepts")}
-                  className="w-full flex items-center space-x-3 p-4 text-left bg-gradient-to-r from-green-50 to-green-100/50 hover:from-green-100 hover:to-green-200/50 rounded-2xl transition-all duration-200 border border-green-200/50 group"
-                >
-                  <div className="w-8 h-8 bg-green-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <BarChart3 className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-900">DSA Concepts</span>
-                    <p className="text-xs text-gray-600">Learn algorithms & data structures</p>
-                  </div>
-                </button>
-                <button
-                  onClick={() => setNewMessage("Technical interview tips")}
-                  className="w-full flex items-center space-x-3 p-4 text-left bg-gradient-to-r from-purple-50 to-purple-100/50 hover:from-purple-100 hover:to-purple-200/50 rounded-2xl transition-all duration-200 border border-purple-200/50 group"
-                >
-                  <div className="w-8 h-8 bg-purple-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <BookOpen className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-900">Interview Tips</span>
-                    <p className="text-xs text-gray-600">Ace your technical interviews</p>
-                  </div>
-                </button>
-                <button
-                  onClick={() => setNewMessage("Study strategies")}
-                  className="w-full flex items-center space-x-3 p-4 text-left bg-gradient-to-r from-yellow-50 to-yellow-100/50 hover:from-yellow-100 hover:to-yellow-200/50 rounded-2xl transition-all duration-200 border border-yellow-200/50 group"
-                >
-                  <div className="w-8 h-8 bg-yellow-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Lightbulb className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-900">Study Strategies</span>
-                    <p className="text-xs text-gray-600">Optimize your learning approach</p>
-                  </div>
-                </button>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
