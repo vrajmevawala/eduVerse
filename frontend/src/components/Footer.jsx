@@ -21,6 +21,7 @@ const Footer = ({ user, onOpenAuthModal }) => {
     { name: "Resources", path: "/resources" },
     { name: "Results", path: "/results" },
     { name: "Bookmarks", path: "/bookmarks" },
+    { name: "About Us", path: "/why-choose-us" },
   ];
 
   const features = [
@@ -47,7 +48,7 @@ const Footer = ({ user, onOpenAuthModal }) => {
             <div className="flex items-center mb-6">
               <img
                 src={footerlogo}
-                alt="PlacePrep Logo"
+                alt="EduVerse Logo"
                 className="h-12"
               />
             </div>
@@ -121,7 +122,7 @@ const Footer = ({ user, onOpenAuthModal }) => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-6 text-sm text-gray-400">
               <span>
-                &copy; {new Date().getFullYear()} PlacePrep. All rights
+                &copy; {new Date().getFullYear()} EduVerse. All rights
                 reserved.
               </span>
             </div>

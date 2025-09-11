@@ -24,7 +24,7 @@ const SignUpForm = ({ onSignUp, onBack, onGoogleAuth, onSignIn }) => {
     <div className="w-full flex flex-col items-center">
       <div className="w-full flex flex-col items-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-1">Create Account</h2>
-        <p className="text-gray-500 text-sm mb-3">Join PlacePrep and start your journey</p>
+        <p className="text-gray-500 text-sm mb-3">Join EduVerse and start your journey</p>
       </div>
       <div className="w-full flex flex-col items-center gap-3">
         <button

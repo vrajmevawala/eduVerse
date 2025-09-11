@@ -16,7 +16,7 @@ const LoginForm = ({ onLogin, onBack, onForgotPassword, onGoogleAuth, onSignUp }
   return (
     <div className="w-full flex flex-col items-center">
       <div className="w-full flex flex-col items-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-1">Sign in to PlacePrep</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-1">Sign in to EduVerse</h2>
         <p className="text-gray-500 text-sm mb-6">Welcome back! Please sign in to continue</p>
       </div>
       <div className="w-full flex flex-col items-center gap-3">

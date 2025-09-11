@@ -30,14 +30,14 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       fullName: 'Admin User',
-      email: 'admin@placeprep.com',
+      email: 'admin@eduverse.com',
       password: adminPassword,
       role: 'admin',
     },
   });
 
   console.log('Admin user created:', admin.email);
-  console.log('Email: admin@placeprep.com');
+  console.log('Email: admin@eduverse.com');
   console.log('Password: admin123');
   console.log('Seeding finished.');
 }

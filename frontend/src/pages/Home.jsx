@@ -52,11 +52,11 @@ const Home = ({ user, onOpenAuthModal }) => {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
             Prepare for Your
-            <span className="block mt-2">Dream Placement</span>
+            <span className="block mt-2">Better Future</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Master aptitude, technical, and DSA skills with our comprehensive platform. 
-            Get placement-ready with expert-curated content and real-time assessments.
+            Master aptitude, technical, and other essential skills with our comprehensive platform. 
+            Get ready for your future with expert-curated content and real-time assessments.
           </p>
           <motion.div 
             className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -124,7 +124,7 @@ const Home = ({ user, onOpenAuthModal }) => {
               Everything You Need to Succeed
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Our platform provides all the tools and resources you need to excel in placement tests
+              Our platform provides all the tools and resources you need to excel in all type of one word tests
             </p>
           </div>
           
@@ -145,7 +145,7 @@ const Home = ({ user, onOpenAuthModal }) => {
                 <Target className="w-8 h-8 text-white" />
               </motion.div>
               <h3 className="text-xl font-semibold mb-2">Practice Tests</h3>
-              <p className="text-gray-600">Comprehensive aptitude, technical, and DSA questions</p>
+              <p className="text-gray-600">Comprehensive aptitude, technical, and mcq's</p>
             </motion.div>
             <motion.div 
               className="text-center group cursor-pointer" 
@@ -215,7 +215,7 @@ const Home = ({ user, onOpenAuthModal }) => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Why Choose PlacePrep?
+              Why Choose EduVerse?
             </h2>
             <button
               onClick={() => { if (user) { navigate('/why-choose-us'); } else { onOpenAuthModal('login'); } }}
@@ -298,7 +298,7 @@ const Home = ({ user, onOpenAuthModal }) => {
             Ready to Start Your Journey?
           </h2>
           <p className="text-gray-600 text-lg mb-8">
-            Join thousands of students who have successfully prepared with PlacePrep
+            Join thousands of students who have successfully prepared with EduVerse
           </p>
           <motion.button
             onClick={() => onOpenAuthModal('signup')}

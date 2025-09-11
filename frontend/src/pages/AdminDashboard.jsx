@@ -1779,31 +1779,31 @@ const AdminDashboard = ({ user, onNavigate }) => {
               <h2 className="text-xl font-semibold text-black mb-4">Resource Management</h2>
               
               {/* Add Resource Buttons */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="flex items-center justify-center space-x-2 bg-black text-white px-6 py-4 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  <Plus className="w-5 h-5" />
-                  <span>Add Question</span>
-                </button>
-                
-                <button
-                  onClick={() => setShowPdfForm(true)}
-                  className="flex items-center justify-center space-x-2 bg-black text-white px-6 py-4 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  <FileText className="w-5 h-5" />
-                  <span>Add PDF</span>
-                </button>
-                
-                <button
-                  onClick={() => setShowVideoForm(true)}
-                  className="flex items-center justify-center space-x-2 bg-red-600 text-white px-6 py-4 rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  <Video className="w-5 h-5" />
-                  <span>Add Video</span>
-                </button>
-              </div>
+              <div className="flex flex-wrap gap-2 mb-6">
+              <button
+                onClick={() => setShowForm(true)}
+                className="group inline-flex items-center gap-2.5 bg-white border border-gray-200 text-gray-800 px-4 py-2.5 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all duration-200 active:scale-98"
+              >
+                <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
+                <span className="text-sm font-medium">Add Question</span>
+              </button>
+              
+              <button
+                onClick={() => setShowPdfForm(true)}
+                className="group inline-flex items-center gap-2.5 bg-white border border-gray-200 text-gray-800 px-4 py-2.5 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all duration-200 active:scale-98"
+              >
+                <FileText className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+                <span className="text-sm font-medium">Add PDF</span>
+              </button>
+              
+              <button
+                onClick={() => setShowVideoForm(true)}
+                className="group inline-flex items-center gap-2.5 bg-black border border-gray-800 text-white px-4 py-2.5 rounded-xl hover:bg-gray-900 hover:border-gray-700 hover:shadow-md transition-all duration-200 active:scale-98"
+              >
+                <Video className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+                <span className="text-sm font-medium">Add Video</span>
+              </button>
+            </div>
 
               {/* Resource switcher */}
               <div className="mb-4 flex flex-wrap items-center gap-2">

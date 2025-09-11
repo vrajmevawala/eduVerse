@@ -61,9 +61,9 @@ const parseMarkdownToHtml = (md) => {
   closeLists();
   return html;
 };
-import { 
-  Brain, 
-  Send, 
+import {
+  Brain,
+  Send,
   Bot,
   FileText,
   Image,
@@ -88,7 +88,7 @@ const AIAssistant = ({ user }) => {
         const parsed = JSON.parse(saved);
         return parsed.map(m => ({ ...m, timestamp: new Date(m.timestamp) }));
       }
-    } catch {}
+    } catch { }
     return [{
       id: 1,
       type: 'bot',
@@ -120,7 +120,7 @@ const AIAssistant = ({ user }) => {
     try {
       const serializable = chatMessages.map(m => ({ ...m, timestamp: m.timestamp.toISOString() }));
       localStorage.setItem('ai_chat_messages', JSON.stringify(serializable));
-    } catch {}
+    } catch { }
   }, [chatMessages]);
 
   // Persist mode
@@ -159,7 +159,7 @@ const AIAssistant = ({ user }) => {
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // Add analysis result to chat
         const analysisMessage = {
           id: Date.now(),
@@ -168,7 +168,7 @@ const AIAssistant = ({ user }) => {
           timestamp: new Date(data.timestamp)
         };
         setChatMessages(prev => [...prev, analysisMessage]);
-        
+
         // Reset file selection
         setSelectedAnalysisFile(null);
       } else {
@@ -268,7 +268,7 @@ const AIAssistant = ({ user }) => {
       }
     ]);
   };
-    const handleDrop = (event) => {
+  const handleDrop = (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file && (file.type === 'application/pdf' || file.type.startsWith('image/'))) {
@@ -349,7 +349,7 @@ const AIAssistant = ({ user }) => {
 
                 <div className="bg-gradient-to-b from-gray-50/50 to-white/50 rounded-2xl p-4 h-[65vh] flex flex-col">
                   {/* Chat Messages */}
-                  <div 
+                  <div
                     ref={chatContainerRef}
                     className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2"
                     style={{ scrollbarWidth: 'thin', scrollbarColor: '#e5e7eb #f3f4f6' }}
@@ -365,11 +365,10 @@ const AIAssistant = ({ user }) => {
                           </div>
                         )}
                         <div
-                          className={`max-w-md px-4 py-3 rounded-2xl shadow-sm ${
-                            message.type === 'user'
+                          className={`max-w-md px-4 py-3 rounded-2xl shadow-sm ${message.type === 'user'
                               ? 'bg-black text-white ml-8'
                               : 'bg-white border border-gray-100 text-gray-800'
-                          }`}
+                            }`}
                         >
                           {message.type === 'bot' ? (
                             <div
@@ -445,7 +444,7 @@ const AIAssistant = ({ user }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Analysis Type</label>
@@ -459,7 +458,7 @@ const AIAssistant = ({ user }) => {
                     <option value="questions">❓ Generate Questions</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">Upload File</label>
                   <div className="relative">
@@ -482,22 +481,30 @@ const AIAssistant = ({ user }) => {
                         <br />or drag and drop
                       </p>
                       <p className="text-xs text-gray-500 mt-1">PDF, JPEG, PNG up to 10MB</p>
-                      
+
                     </label>
                   </div>
-                  
+
                   {selectedAnalysisFile && (
-                    <div className="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-200">
+                    <div className="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-200 flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <FileText className="w-4 h-4 text-blue-600" />
                         <span className="text-sm text-blue-800 font-medium truncate">
                           {selectedAnalysisFile.name}
                         </span>
                       </div>
+                      <button
+                        onClick={() => setSelectedAnalysisFile(null)}
+                        className="ml-2 p-1 text-gray-500 hover:text-red-600 transition-colors"
+                        title="Remove file"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   )}
+
                 </div>
-                
+
                 <button
                   onClick={handleAnalyzeFile}
                   disabled={!selectedAnalysisFile || analyzing}
@@ -515,7 +522,7 @@ const AIAssistant = ({ user }) => {
                     </>
                   )}
                 </button>
-                
+
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
                   <p className="text-xs font-medium text-gray-700 mb-2">✨ AI Analysis Features</p>
                   <ul className="text-xs text-gray-600 space-y-1">
@@ -528,7 +535,7 @@ const AIAssistant = ({ user }) => {
               </div>
             </div>
 
-            
+
           </div>
         </div>
       </div>

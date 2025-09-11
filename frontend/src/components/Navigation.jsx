@@ -17,7 +17,7 @@ const Navigation = ({ user, onLogout, isContestMode = false, onOpenAuthModal }) 
 
   const publicNavItems = [
     { name: 'Home', path: '/' },
-    { name: 'Why Choose Us', path: '/why-choose-us' },
+    { name: 'About Us', path: '/why-choose-us' },
   ];
 
   const privateNavItems = [
@@ -97,7 +97,7 @@ const Navigation = ({ user, onLogout, isContestMode = false, onOpenAuthModal }) 
               className="flex items-center space-x-2 cursor-pointer"
               onClick={(e) => handleNavigationClick(e, '/')}
             >
-              <img src={logo} alt="PlacePrep Logo" className="w-32 h-auto" />
+              <img src={logo} alt="EduVerse Logo" className="w-32 h-auto" />
             </Link>
           </motion.div>
 

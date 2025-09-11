@@ -243,7 +243,7 @@ class NotificationService {
   // Welcome notification for new users
   async notifyWelcome(userId, userData) {
     const notification = {
-      title: '👋 Welcome to PlacePrep!',
+      title: '👋 Welcome to EduVerse!',
       message: `Welcome ${userData.fullName}! Start your preparation journey with our practice tests and contests.`,
       type: 'WELCOME',
       data: { userId: userData.id, userName: userData.fullName }

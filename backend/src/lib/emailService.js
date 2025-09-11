@@ -33,14 +33,14 @@ export const sendWelcomeEmail = async (email, fullName) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Welcome to PlacePrep - Your Success Journey Begins',
+      subject: 'Welcome to EduVerse - Your Success Journey Begins',
       html: `
         <!DOCTYPE html>
         <html lang="en">
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Welcome to PlacePrep</title>
+          <title>Welcome to EduVerse</title>
         </head>
         <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
           <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
@@ -51,7 +51,7 @@ export const sendWelcomeEmail = async (email, fullName) => {
                   <!-- Header with Logo -->
                   <tr>
                     <td style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 40px 30px; text-align: center;">
-                      <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 300; letter-spacing: 1px;">Welcome to PlacePrep</h1>
+                      <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 300; letter-spacing: 1px;">Welcome to EduVerse</h1>
                       <p style="color: #e3f2fd; margin: 10px 0 0 0; font-size: 16px; font-weight: 300;">Your Gateway to Success</p>
                     </td>
                   </tr>
@@ -61,10 +61,10 @@ export const sendWelcomeEmail = async (email, fullName) => {
                     <td style="padding: 40px 30px;">
                       <h2 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Hello ${fullName},</h2>
                       <p style="color: #555555; margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-                        Welcome to PlacePrep! We're thrilled to have you join our community of learners and achievers. Your journey towards professional excellence starts now.
+                        Welcome to EduVerse! We're thrilled to have you join our community of learners and achievers. Your journey towards professional excellence starts now.
                       </p>
                       <p style="color: #555555; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
-                        At PlacePrep, we provide comprehensive preparation resources, live contests, and personalized learning experiences to help you achieve your career goals.
+                        At EduVerse, we provide comprehensive preparation resources, live contests, and personalized learning experiences to help you achieve your career goals.
                       </p>
                     </td>
                   </tr>
@@ -135,7 +135,7 @@ export const sendWelcomeEmail = async (email, fullName) => {
                   <tr>
                     <td style="background-color: #2c3e50; padding: 30px; text-align: center;">
                       <p style="color: #bdc3c7; margin: 0 0 10px 0; font-size: 14px;">
-                        © ${new Date().getFullYear()} PlacePrep. All rights reserved.
+                        © ${new Date().getFullYear()} EduVerse. All rights reserved.
                       </p>
                       <p style="color: #95a5a6; margin: 0; font-size: 12px;">
                         This email was sent to ${email}. If you didn't create an account, please ignore this email.
@@ -185,7 +185,7 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Reset Your PlacePrep Password',
+      subject: 'Reset Your EduVerse Password',
       html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -213,7 +213,7 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
                     <td style="padding: 40px 30px;">
                       <h2 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Reset Your Password</h2>
                       <p style="color: #555555; margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-                        We received a request to reset your password for your PlacePrep account. If you didn't make this request, you can safely ignore this email.
+                        We received a request to reset your password for your EduVerse account. If you didn't make this request, you can safely ignore this email.
                       </p>
                       <p style="color: #555555; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
                         To reset your password, click the button below. This link will expire in <strong>1 hour</strong> for security purposes.
@@ -250,7 +250,7 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
                   <tr>
                     <td style="background-color: #2c3e50; padding: 30px; text-align: center;">
                       <p style="color: #bdc3c7; margin: 0 0 10px 0; font-size: 14px;">
-                        © ${new Date().getFullYear()} PlacePrep. All rights reserved.
+                        © ${new Date().getFullYear()} EduVerse. All rights reserved.
                       </p>
                       <p style="color: #95a5a6; margin: 0; font-size: 12px;">
                         This email was sent to ${email}. If you didn't request a password reset, please ignore this email.
@@ -295,7 +295,7 @@ export const sendEmailVerificationEmail = async (email, fullName, verificationCo
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Verify Your PlacePrep Email Address',
+      subject: 'Verify Your EduVerse Email Address',
       html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -323,7 +323,7 @@ export const sendEmailVerificationEmail = async (email, fullName, verificationCo
                     <td style="padding: 40px 30px;">
                       <h2 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Hello ${fullName},</h2>
                       <p style="color: #555555; margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-                        Thank you for signing up with PlacePrep! To complete your registration and access all features, please verify your email address.
+                        Thank you for signing up with EduVerse! To complete your registration and access all features, please verify your email address.
                       </p>
                       <p style="color: #555555; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
                         Use the verification code below to verify your email address. This code will expire in <strong>10 minutes</strong> for security purposes.
@@ -344,7 +344,7 @@ export const sendEmailVerificationEmail = async (email, fullName, verificationCo
                         <h3 style="color: #2c3e50; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">How to Verify:</h3>
                         <ol style="color: #666666; margin: 0; padding-left: 20px; line-height: 1.8;">
                           <li>Copy the verification code above</li>
-                          <li>Return to PlacePrep and enter the code</li>
+                          <li>Return to EduVerse and enter the code</li>
                           <li>Click "Verify Email" to complete registration</li>
                         </ol>
                       </div>
@@ -357,7 +357,7 @@ export const sendEmailVerificationEmail = async (email, fullName, verificationCo
                       </div>
                       
                       <p style="color: #555555; margin: 30px 0 0 0; font-size: 16px; line-height: 1.6;">
-                        If you didn't create a PlacePrep account, please ignore this email.
+                        If you didn't create a EduVerse account, please ignore this email.
                       </p>
                     </td>
                   </tr>
@@ -366,7 +366,7 @@ export const sendEmailVerificationEmail = async (email, fullName, verificationCo
                   <tr>
                     <td style="background-color: #2c3e50; padding: 30px; text-align: center;">
                       <p style="color: #bdc3c7; margin: 0 0 10px 0; font-size: 14px;">
-                        © ${new Date().getFullYear()} PlacePrep. All rights reserved.
+                        © ${new Date().getFullYear()} EduVerse. All rights reserved.
                       </p>
                       <p style="color: #95a5a6; margin: 0; font-size: 12px;">
                         This email was sent to ${email}. If you didn't create an account, please ignore this email.
@@ -414,7 +414,7 @@ export const sendModeratorRoleEmail = async (email, fullName, password) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'You\'ve Been Assigned Moderator Role at PlacePrep',
+      subject: 'You\'ve Been Assigned Moderator Role at EduVerse',
       html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -442,7 +442,7 @@ export const sendModeratorRoleEmail = async (email, fullName, password) => {
                     <td style="padding: 40px 30px;">
                       <h2 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Hello ${fullName},</h2>
                       <p style="color: #555555; margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-                        Congratulations! You have been assigned the <strong>Moderator</strong> role at PlacePrep. As a moderator, you'll have access to create contests, manage questions, and help maintain the quality of our platform.
+                        Congratulations! You have been assigned the <strong>Moderator</strong> role at EduVerse. As a moderator, you'll have access to create contests, manage questions, and help maintain the quality of our platform.
                       </p>
                       <p style="color: #555555; margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
                         Your account has been created and is ready to use. Please find your login credentials below.
@@ -499,7 +499,7 @@ export const sendModeratorRoleEmail = async (email, fullName, password) => {
                   <tr>
                     <td style="background-color: #2c3e50; padding: 30px; text-align: center;">
                       <p style="color: #bdc3c7; margin: 0 0 10px 0; font-size: 14px;">
-                        © ${new Date().getFullYear()} PlacePrep. All rights reserved.
+                        © ${new Date().getFullYear()} EduVerse. All rights reserved.
                       </p>
                       <p style="color: #95a5a6; margin: 0; font-size: 12px;">
                         This email was sent to ${email}. If you didn't expect this email, please contact the admin.
