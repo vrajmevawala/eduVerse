@@ -202,7 +202,6 @@ const Bookmark = ({ isAdmin = false }) => {
                 <option value="all">All Categories</option>
                 <option value="Aptitude">Aptitude</option>
                 <option value="Technical">Technical</option>
-                <option value="DSA">DSA</option>
                 <option value="General">General</option>
               </select>
             </div>

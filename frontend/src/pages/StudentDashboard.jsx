@@ -313,7 +313,7 @@ const StudentDashboard = ({ user }) => {
           >
             <Target className="w-8 h-8 mb-3" />
             <h3 className="font-semibold mb-2">Start Practice</h3>
-            <p className="text-sm text-gray-600">Begin with aptitude, technical, or DSA questions</p>
+            <p className="text-sm text-gray-600">Begin with aptitude, technical, or multiple choice questions</p>
           </button>
           
           <button

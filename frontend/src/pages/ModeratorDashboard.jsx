@@ -1711,7 +1711,6 @@ const ModeratorDashboard = ({ user }) => {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Type</label>
                     <select name="type" value={contestForm.type} onChange={handleContestChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400">
-                      <option value="DSA">DSA</option>
                       <option value="Technical">Technical</option>
                       <option value="Aptitude">Aptitude</option>
                     </select>

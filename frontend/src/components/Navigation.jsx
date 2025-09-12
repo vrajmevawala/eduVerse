@@ -198,10 +198,6 @@ const Navigation = ({ user, onLogout, isContestMode = false, onOpenAuthModal }) 
                               className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                               onClick={() => { setShowPracticeDropdown(false); navigate('/practice?category=Technical'); }}
                             >Technical Test</button>
-                            <button
-                              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                              onClick={() => { setShowPracticeDropdown(false); navigate('/practice?category=DSA'); }}
-                            >DSA Round</button>
                             </motion.div>
                           )}
                         </AnimatePresence>

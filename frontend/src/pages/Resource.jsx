@@ -867,7 +867,6 @@ const Resource = ({ user }) => {
                   >
                     <option value="all">All Categories</option>
                     <option value="Aptitude">Aptitude</option>
-                    <option value="DSA">DSA</option>
                     <option value="Technical">Technical</option>
                     <option value="General">General</option>
                   </select>
@@ -1701,7 +1700,6 @@ const Resource = ({ user }) => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
                     >
                       <option value="Aptitude">Aptitude</option>
-                      <option value="DSA">DSA</option>
                       <option value="Technical">Technical</option>
                       <option value="General">General</option>
                     </select>

@@ -25,7 +25,7 @@ const Footer = ({ user, onOpenAuthModal }) => {
   ];
 
   const features = [
-    { icon: Target, name: "Practice Tests", desc: "Aptitude, Technical & DSA" },
+    { icon: Target, name: "Practice Tests", desc: "Aptitude, Technical & much more" },
     { icon: Trophy, name: "Live Contests", desc: "Real-time competitions" },
     { icon: BarChart3, name: "Analytics", desc: "Performance tracking" },
     { icon: BookOpen, name: "Resources", desc: "Study materials" },
@@ -54,7 +54,7 @@ const Footer = ({ user, onOpenAuthModal }) => {
             </div>
             <p className="text-gray-300 text-sm leading-relaxed mb-6">
               Your comprehensive platform for placement preparation. Master
-              aptitude, technical, and DSA skills with expert-curated content
+              aptitude, technical, and much more skills with expert-curated content
               and real-time assessments.
             </p>
 

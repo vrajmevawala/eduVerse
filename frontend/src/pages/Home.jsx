@@ -9,7 +9,7 @@ const Home = ({ user, onOpenAuthModal }) => {
     {
       icon: Target,
       title: 'Practice Tests',
-      description: 'Comprehensive aptitude, technical, and DSA questions'
+      description: 'Comprehensive aptitude, technical, and multiple choice questions'
     },
     {
       icon: Trophy,
