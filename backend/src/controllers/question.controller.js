@@ -11,6 +11,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 export const addQuestion = async (req, res) => {
   try {
     const { category, subcategory, level, question, options, explanation, visibility } = req.body;
+    const scoreValue = Number(req.body.score);
     const userId = req.user.id;
     const userRole = req.user.role;
 
@@ -59,6 +60,7 @@ export const addQuestion = async (req, res) => {
         question,
         options,
         correctAnswers: normalizedCorrectAnswers,
+        score: Number.isFinite(scoreValue) && scoreValue > 0 ? scoreValue : 1,
         explanation: explanation || '',
         visibility: visibility !== undefined ? visibility : true,
         createdBy: userId,
@@ -134,6 +136,7 @@ export const addQuestionsFromExcel = async (req, res) => {
       correctAnswers: row.correctAnswers
         ? (Array.isArray(row.correctAnswers) ? row.correctAnswers : String(row.correctAnswers).split(',').map(s => s.trim()).filter(Boolean))
         : [],
+      score: Number.isFinite(Number(row.score)) && Number(row.score) > 0 ? Number(row.score) : 1,
       explanation: row.explanation || '',
       visibility: row.visibility !== undefined ? row.visibility : defaultVisibility,
       createdBy: userId,
@@ -201,6 +204,7 @@ export const addQuestionsFromJson = async (req, res) => {
       correctAnswers: q.correctAnswers
         ? (Array.isArray(q.correctAnswers) ? q.correctAnswers : String(q.correctAnswers).split(',').map(s => s.trim()).filter(Boolean))
         : [],
+      score: Number.isFinite(Number(q.score)) && Number(q.score) > 0 ? Number(q.score) : 1,
       explanation: q.explanation || '',
       visibility: q.visibility !== undefined ? q.visibility : defaultVisibility,
       createdBy: userId,
@@ -336,6 +340,7 @@ export const updateQuestion = async (req, res) => {
           ? req.body.correctAnswers.map(s => String(s).trim()).filter(Boolean)
           : String((req.body.correctAnswers ?? req.body.correctAns) || '').split(',').map(s => s.trim()).filter(Boolean))
       : undefined;
+    const scoreUpdateValue = Number(req.body.score);
     const updated = await prisma.question.update({
       where: { id: Number(id) },
       data: { 
@@ -346,6 +351,7 @@ export const updateQuestion = async (req, res) => {
         options, 
         explanation, 
         visibility,
+        ...(Number.isFinite(scoreUpdateValue) && scoreUpdateValue > 0 ? { score: scoreUpdateValue } : {}),
         ...(normalizedCorrectAnswersUpdate !== undefined ? { correctAnswers: normalizedCorrectAnswersUpdate } : {})
       }
     });

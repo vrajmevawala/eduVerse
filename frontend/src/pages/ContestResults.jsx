@@ -211,12 +211,13 @@ const ContestResults = () => {
   
   const score = finalResults.correct || finalResults.correctAnswers || 0;
   const totalQuestions = finalResults.totalQuestions || 0;
+  const totalMaxMarks = finalResults.totalMaxMarks || totalQuestions || 0;
   const negativeMarks = finalResults.negativeMarks || 0;
   const finalScore = finalResults.finalScore || finalResults.score || score;
   const hasNegativeMarking = finalResults.hasNegativeMarking || false;
   const negativeMarkingValue = finalResults.negativeMarkingValue || 0;
   const negativeMarkingRatio = finalResults.negativeMarkingRatio || (negativeMarkingValue === 0.25 ? '1/4' : (negativeMarkingValue ? negativeMarkingValue : '0'));
-  const percentage = totalQuestions > 0 ? Math.round((finalScore / totalQuestions) * 100) : 0;
+  const percentage = totalMaxMarks > 0 ? Math.round((finalScore / totalMaxMarks) * 100) : 0;
   const timeTaken = finalResults.timeTaken || 0;
   
   // Debug logging for troubleshooting
@@ -272,7 +273,7 @@ const ContestResults = () => {
               
               {/* Final Score */}
               <div className="text-center p-6 bg-gray-50 border border-gray-200">
-                <div className="text-4xl font-bold text-black mb-2">{finalScore.toFixed(2)}/{totalQuestions}</div>
+                <div className="text-4xl font-bold text-black mb-2">{finalScore.toFixed(2)}/{totalMaxMarks || totalQuestions}</div>
                 <div className="text-sm text-gray-600">Final Score</div>
                 {hasNegativeMarking && negativeMarks > 0 && (
                   <div className="text-xs text-red-600 mt-1">

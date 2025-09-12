@@ -30,6 +30,14 @@ const Practice = ({ user }) => {
   const [practiceTestId, setPracticeTestId] = useState(null);
   const [submitted, setSubmitted] = useState(false);
 
+  // Helpers
+  const getOptions = (question) => {
+    if (!question) return [];
+    if (Array.isArray(question.options)) return question.options;
+    if (question.options && typeof question.options === 'object') return Object.values(question.options);
+    return [];
+  };
+
   // Restore test state from localStorage if present
   useEffect(() => {
     const saved = localStorage.getItem('practiceTestState');
@@ -148,15 +156,12 @@ const Practice = ({ user }) => {
     if (userAnswers[idx]) return; // Prevent changing answer
     
     let isCorrect = false;
+    const optionTexts = getOptions(questions[idx]);
+    const selectedOptionText = optionTexts[option];
     if (Array.isArray(questions[idx].correctAnswers)) {
-      // New structure: check if selected option text matches any correct answer
-      const selectedOptionText = Array.isArray(questions[idx].options) 
-        ? questions[idx].options[option] 
-        : questions[idx].options[option];
       isCorrect = questions[idx].correctAnswers.includes(selectedOptionText);
     } else {
-      // Old structure: check if option index matches correct answer
-      isCorrect = questions[idx].correctAnswers.includes(questions[idx].options[option]) || questions[idx].correctAnswers.includes(option);
+      isCorrect = questions[idx].correctAnswers === selectedOptionText || questions[idx].correctAnswers === option;
     }
     
     const updated = [...userAnswers];
@@ -203,14 +208,8 @@ const Practice = ({ user }) => {
         }
         
         // Send the actual option text instead of index
-        let selectedOption = '';
-        if (Array.isArray(q.options)) {
-          // New structure: get option text from index
-          selectedOption = q.options[userAnswer.selected] || '';
-        } else {
-          // Old structure: get option text from key
-          selectedOption = q.options[userAnswer.selected] || '';
-        }
+        const optionTexts = getOptions(q);
+        const selectedOption = optionTexts[userAnswer.selected] || '';
         
         return { questionId: q.id, selectedOption };
       });
@@ -222,7 +221,21 @@ const Practice = ({ user }) => {
         body: JSON.stringify({ answers })
       });
       const data = await res.json();
-      if (!res.ok) setError(data.message || 'Submission failed.');
+      if (!res.ok) {
+        if (res.status === 403) {
+          setError('This practice test is not authorized for your session. Please start a new test.');
+          // Reset local state/localStorage to avoid stale IDs
+          setSubmitted(false);
+          setQuestions([]);
+          setCurrentQ(0);
+          setUserAnswers([]);
+          setShowExplanation([]);
+          setPracticeTestId(null);
+          localStorage.removeItem('practiceTestState');
+        } else {
+          setError(data.message || 'Submission failed.');
+        }
+      }
       else {
         setSubmitted(true);
         localStorage.removeItem('practiceTestState');
@@ -402,7 +415,7 @@ const Practice = ({ user }) => {
             </div>
             <div className="flex-1 flex flex-col items-center">
               {loading && <div className="text-lg">Loading questions...</div>}
-              {!loading && questions.length > 0 && (
+              {!loading && questions.length > 0 && questions[currentQ] && (
                 <div className="w-full max-w-xl bg-white rounded-sm shadow p-6 border border-gray-200">
                   <div className="flex items-center justify-between mb-4">
                     <div className="text-lg font-semibold text-black">Question {currentQ + 1} of {questions.length}</div>
@@ -423,7 +436,7 @@ const Practice = ({ user }) => {
                   </div>
                   <div className="mb-4 text-lg text-black font-medium">{questions[currentQ].question}</div>
                   <div className="grid grid-cols-1 gap-2 mb-4">
-                    {questions[currentQ].options.map((option, index) => {
+                    {getOptions(questions[currentQ]).map((option, index) => {
                       const userAns = userAnswers[currentQ];
                       const isSelected = userAns && userAns.selected === index;
                       const isCorrect = Array.isArray(questions[currentQ].correctAnswers) && questions[currentQ].correctAnswers.includes(option);

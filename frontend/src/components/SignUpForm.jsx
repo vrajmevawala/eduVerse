@@ -133,11 +133,11 @@ const SignUpForm = ({ onSignUp, onBack, onGoogleAuth, onSignIn }) => {
           />
           <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
             I agree to the{' '}
-            <a href="#" className="text-black underline hover:text-gray-700">
+            <a href="/terms" className="text-black underline hover:text-gray-700">
               Terms of Service
             </a>{' '}
             and{' '}
-            <a href="#" className="text-black underline hover:text-gray-700">
+            <a href="/privacy" className="text-black underline hover:text-gray-700">
               Privacy Policy
             </a>
           </label>

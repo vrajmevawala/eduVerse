@@ -15,6 +15,7 @@ import questionRoutes from './routes/question.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import resultsRoutes from './routes/results.routes.js';
 import resourceRoutes from './routes/resource.routes.js';
+import contactRoutes from './routes/contact.routes.js';
 import cron from 'node-cron';
 import { PrismaClient } from '@prisma/client';
 import NotificationService from './lib/notificationService.js';
@@ -59,6 +60,7 @@ app.use('/api/testseries', testSeriesRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/results', resultsRoutes);
 app.use('/api/resources', resourceRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'));

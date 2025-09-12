@@ -35,6 +35,7 @@ model Question {
   question          String
   options           String[]          // Changed from Json to String array
   correctAnswers    String[]          // Array of correct answer strings
+  score             Float             @default(1.0)
   explanation       String
   visibility        Boolean           @default(true)
   createdBy         Int
@@ -154,6 +155,7 @@ model Resource {
   fileName    String?     // Original filename
   fileSize    Int?        // File size in bytes
   videoUrl    String?     // For video resources
+  score       Float?
   createdBy   Int
   createdAt   DateTime    @default(now())
   creator     User        @relation("UserResources", fields: [createdBy], references: [id], onDelete: Cascade)

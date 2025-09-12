@@ -466,55 +466,77 @@ router.get('/ai/test', authMiddleware, async (req, res) => {
   }
 });
 
-// AI Assistant Chat
+// AI Assistant Chat (with conversation history)
 router.post('/ai/chat', authMiddleware, async (req, res) => {
   try {
-    const { message, context } = req.body;
-    
+    const { message, context, mode, history } = req.body;
+
     if (!message) {
       return res.status(400).json({ message: 'Message is required' });
     }
 
-    // Create a more intelligent prompt based on context
-    let systemPrompt = `You are **EduBot**, a strict AI study assistant for a placement preparation platform. 
+    const systemPrompt = `You are EduBot, a strict AI study assistant for a placement preparation platform.
 
-    ⚠️ RULES:
-    - ONLY answer questions related to **education, aptitude, coding (DSA), technical interviews, placements, and learning guidance**.  
-    - If the user asks about **anything else (personal topics, gossip, unrelated subjects, politics, entertainment, etc.)**, you must respond with:  
-      "⚠️ I can only assist with study, education, aptitude, coding, or placement-related topics."  
-    - Never generate harmful, irrelevant, or misleading content.  
-    - Keep answers clear, concise, and structured for **students preparing for placements**.  
-    - When explaining coding, always prefer **step-by-step reasoning** and provide **clean code snippets** if needed.  
+RULES:
+- ONLY answer questions related to education, aptitude, coding (DSA), technical interviews, placements, and learning guidance.
+- If the user asks about anything else (personal topics, gossip, unrelated subjects, politics, entertainment, etc.), reply exactly with:
+  "⚠️ I can only assist with study, education, aptitude, coding, or placement-related topics."
+- Keep answers clear and structured for students preparing for placements.
+- Prefer step-by-step reasoning and use short, clean code snippets when helpful.
 
-    Context: ${context || 'General study assistance'}  
+Context: ${context || 'General study assistance'}`;
 
-    Now, carefully answer the student’s question while following these rules.`;
+    // Map response mode to generation settings
+    const generationConfig = (() => {
+      switch ((mode || 'balanced').toLowerCase()) {
+        case 'concise':
+          return { temperature: 0.4, topP: 0.8, topK: 40, maxOutputTokens: 512 };
+        case 'detailed':
+          return { temperature: 0.9, topP: 0.95, topK: 64, maxOutputTokens: 2048 };
+        default:
+          return { temperature: 0.7, topP: 0.9, topK: 50, maxOutputTokens: 1024 };
+      }
+    })();
 
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', generationConfig });
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    
-    const result = await model.generateContent([systemPrompt, message]);
+    // Convert incoming short history into Gemini chat history
+    const chatHistory = Array.isArray(history)
+      ? history
+          .slice(-12)
+          .map((h) => ({
+            role: h.type === 'user' ? 'user' : 'model',
+            parts: [{ text: String(h.message || '') }]
+          }))
+      : [];
+
+    // Start a chat with system prompt as first model turn to steer behavior
+    const chat = model.startChat({
+      history: [
+        { role: 'user', parts: [{ text: 'Follow these instructions strictly.' }] },
+        { role: 'model', parts: [{ text: systemPrompt }] },
+        ...chatHistory
+      ]
+    });
+
+    const result = await chat.sendMessage(message);
     const response = await result.response;
     const text = response.text();
 
-    res.json({ 
-      message: text,
-      timestamp: new Date()
-    });
+    return res.json({ message: text, timestamp: new Date() });
   } catch (error) {
     console.error('Error in AI chat:', error);
-    
-    // Provide more detailed error information
+
     let errorMessage = 'Failed to get AI response';
-    if (error.message.includes('API key')) {
+    if (error?.message?.includes('API key')) {
       errorMessage = 'Invalid API key. Please check your Gemini API key.';
-    } else if (error.message.includes('models/')) {
+    } else if (error?.message?.includes('models/')) {
       errorMessage = 'Model not found. Please check API key and model availability.';
-    } else if (error.status === 404) {
+    } else if (error?.status === 404) {
       errorMessage = 'API endpoint not found. Please check API configuration.';
     }
-    
-    res.status(500).json({ 
+
+    return res.status(500).json({
       message: errorMessage,
       suggestion: 'Please verify your Gemini API key is correct and has proper permissions.'
     });

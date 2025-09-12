@@ -530,3 +530,37 @@ export const sendModeratorRoleEmail = async (email, fullName, password) => {
     throw error;
   }
 }; 
+
+// Send Contact Us message to PlacePrep team
+export const sendContactMessage = async ({ name, email, message }) => {
+  try {
+    const transporter = createTransporter();
+    if (!transporter) {
+      console.log('Skipping contact email due to missing credentials');
+      return;
+    }
+
+    const toAddress = process.env.CONTACT_EMAIL || 'team.placeprep@gmail.com';
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: toAddress,
+      replyTo: email,
+      subject: `New Contact Message from ${name}`,
+      html: `
+        <div style="font-family:Segoe UI,Arial,sans-serif;line-height:1.6;color:#333">
+          <h2 style="margin:0 0 10px 0;color:#111">Contact Message</h2>
+          <p style="margin:0 0 4px 0"><strong>Name:</strong> ${name}</p>
+          <p style="margin:0 0 12px 0"><strong>Email:</strong> ${email}</p>
+          <div style="background:#f7f7f7;border:1px solid #e5e7eb;border-radius:8px;padding:12px;white-space:pre-wrap">${message}</div>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Contact email relayed from ${email}`);
+  } catch (error) {
+    console.error('Error sending contact email:', error);
+    throw error;
+  }
+};

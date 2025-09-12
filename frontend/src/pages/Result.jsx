@@ -215,8 +215,8 @@ const Result = () => {
       ? (completedContests.reduce((sum, p) => {
           const result = results[p.pid];
           const finalScore = result?.finalScore ?? result?.score ?? result?.correct ?? result?.correctAnswers ?? 0;
-          const totalQuestions = result?.totalQuestions ?? 0;
-          return sum + (totalQuestions > 0 ? (finalScore / totalQuestions) * 100 : 0);
+          const denom = (result?.totalMaxMarks ?? result?.totalQuestions) || 0;
+          return sum + (denom > 0 ? (finalScore / denom) * 100 : 0);
         }, 0) / completedContests.length).toFixed(1)
       : '0',
     averageAccuracy: (completedPractice.length + completedContests.length) > 0 
@@ -242,8 +242,8 @@ const Result = () => {
       const correctScore = p._type === 'contest' 
         ? (result?.finalScore ?? result?.score ?? result?.correct ?? result?.correctAnswers ?? 0)
         : (result?.correct ?? result?.correctAnswers ?? 0);
-      const totalQuestions = result?.totalQuestions ?? 0;
-      const percentage = totalQuestions > 0 ? (correctScore / totalQuestions) * 100 : 0;
+      const denom = p._type === 'contest' ? ((result?.totalMaxMarks ?? result?.totalQuestions) || 0) : (result?.totalQuestions ?? 0);
+      const percentage = denom > 0 ? (correctScore / denom) * 100 : 0;
       
       return {
         date: p.startTime ? new Date(p.startTime).toLocaleDateString() : `Test ${index + 1}`,
@@ -273,8 +273,10 @@ const Result = () => {
   const lastCorrect = lastResult && lastActivity?._type === 'contest' 
     ? (lastResult.finalScore ?? lastResult.score ?? lastResult.correct ?? lastResult.correctAnswers ?? 0)
     : (lastResult?.correct ?? lastResult?.correctAnswers ?? 0);
-  const lastTotal = lastResult?.totalQuestions ?? 0;
-  const lastPercentage = lastTotal > 0 ? ((lastCorrect / lastTotal) * 100).toFixed(1) : '0';
+  const lastDenom = lastActivity?._type === 'contest' 
+    ? ((lastResult?.totalMaxMarks ?? lastResult?.totalQuestions) || 0)
+    : (lastResult?.totalQuestions ?? 0);
+  const lastPercentage = lastDenom > 0 ? ((lastCorrect / lastDenom) * 100).toFixed(1) : '0';
 
   const bestContestRank = (() => {
     const ranks = completedContests.map(p => {
@@ -329,9 +331,9 @@ const Result = () => {
     const displayScore = type === 'contest' 
       ? (result?.finalScore ?? result?.score ?? correctScoreRaw)
       : correctScoreRaw;
-    const totalQuestions = result?.totalQuestions ?? 0;
-    const percentage = totalQuestions > 0 ? ((displayScore / totalQuestions) * 100).toFixed(1) : '0';
-    const accuracy = totalQuestions > 0 ? ((displayScore / totalQuestions) * 100).toFixed(1) : '0';
+    const denom = type === 'contest' ? ((result?.totalMaxMarks ?? result?.totalQuestions) || 0) : (result?.totalQuestions ?? 0);
+    const percentage = denom > 0 ? ((displayScore / denom) * 100).toFixed(1) : '0';
+    const accuracy = denom > 0 ? ((correctScoreRaw / ((result?.totalQuestions ?? 0) || 1)) * 100).toFixed(1) : '0';
     
     // Contest-specific data
     const rank = type === 'contest' ? getContestRank(test.testSeriesId, displayScore) : null;
@@ -363,7 +365,7 @@ const Result = () => {
           <div className="flex items-center space-x-2">
             <span className="font-semibold text-gray-900">{Number(displayScore).toFixed ? Number(displayScore).toFixed(2).replace(/\.00$/,'') : displayScore}</span>
             <span className="text-gray-400">/</span>
-            <span className="text-gray-600">{totalQuestions}</span>
+            <span className="text-gray-600">{(result?.totalMaxMarks ?? result?.totalQuestions) || 0}</span>
           </div>
         </td>
         <td className="py-4 px-6">
@@ -814,17 +816,23 @@ const Result = () => {
                 {selectedTest.type === 'contest' && (
                   <div className="bg-gray-50 rounded-lg p-4 text-center">
                     <div className="text-2xl font-bold text-gray-900">
-                      {(selectedTest.result?.finalScore ?? selectedTest.result?.score ?? 0).toFixed ? (selectedTest.result?.finalScore ?? selectedTest.result?.score ?? 0).toFixed(2).replace(/\.00$/,'') : (selectedTest.result?.finalScore ?? selectedTest.result?.score ?? 0)}/{selectedTest.result?.totalQuestions ?? 0}
+                      {(selectedTest.result?.finalScore ?? selectedTest.result?.score ?? 0).toFixed ? (selectedTest.result?.finalScore ?? selectedTest.result?.score ?? 0).toFixed(2).replace(/\.00$/,'') : (selectedTest.result?.finalScore ?? selectedTest.result?.score ?? 0)}/{(selectedTest.result?.totalMaxMarks ?? selectedTest.result?.totalQuestions) || 0}
                     </div>
                     <div className="text-sm text-gray-600">Final Score</div>
                   </div>
                 )}
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
                   <div className="text-2xl font-bold text-gray-900">
-                    {selectedTest.result?.totalQuestions > 0 
-                      ? ((((selectedTest.type === 'contest' ? (selectedTest.result?.finalScore ?? selectedTest.result?.score) : (selectedTest.result?.correct ?? selectedTest.result?.correctAnswers ?? 0)) || 0) / selectedTest.result?.totalQuestions) * 100).toFixed(1)
-                      : '0'
-                    }%
+                    {(() => {
+                      if (selectedTest.type === 'contest') {
+                        const numerator = (selectedTest.result?.finalScore ?? selectedTest.result?.score ?? 0) || 0;
+                        const denom = (selectedTest.result?.totalMaxMarks ?? selectedTest.result?.totalQuestions) || 0;
+                        return denom > 0 ? ((numerator / denom) * 100).toFixed(1) : '0';
+                      }
+                      const numerator = (selectedTest.result?.correct ?? selectedTest.result?.correctAnswers ?? 0) || 0;
+                      const denom = selectedTest.result?.totalQuestions || 0;
+                      return denom > 0 ? ((numerator / denom) * 100).toFixed(1) : '0';
+                    })()}%
                   </div>
                   <div className="text-sm text-gray-600">Accuracy</div>
                     </div>

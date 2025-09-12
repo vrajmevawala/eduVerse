@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useRef } from 'react';
 import AdminResults from './AdminResults';
 import { Users, UserPlus, Activity, BarChart3, Eye, Plus, Settings, Trophy, Users as UsersIcon, FileText, Tag, Edit, Trash2, Video, X, Upload, Pencil, Download, Bookmark as BookmarkIcon, Bot as BotIcon, Bell as BellIcon, LogOut as LogOutIcon } from 'lucide-react';
@@ -1979,7 +1977,7 @@ const AdminDashboard = ({ user, onNavigate }) => {
                         <td className="py-2 px-3">{q.category}</td>
                         <td className="py-2 px-3">{q.subcategory}</td>
                         <td className="py-2 px-3">{q.level}</td>
-                        <td className="py-2 px-3">{Array.isArray(q.correctAnswers) ? q.correctAnswers.length : (q.correctAns ? 1 : 0)}</td>
+                        <td className="py-2 px-3">{typeof q.score !== 'undefined' ? Number(q.score) : 1}</td>
                         <td className="py-2 px-3 flex gap-2">
                           <button
                             onClick={() => handleEditQuestion(q)}

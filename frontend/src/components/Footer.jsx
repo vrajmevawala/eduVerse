@@ -63,6 +63,16 @@ const Footer = ({ user, onOpenAuthModal }) => {
                 <Mail className="w-4 h-4 text-gray-400" />
                 <span className="text-sm">team.placeprep@gmail.com</span>
               </div>
+              {/* Developers list */}
+              <div className="pt-4">
+                <h4 className="text-white text-sm font-semibold mb-2">Developers</h4>
+                <ul className="text-gray-300 text-sm space-y-1">
+                  <li>Aaryan Chavda</li>
+                  <li>Yug Gandhi</li>
+                  <li>Samarth Kachhadiya</li>
+                  <li>Vraj Mevawala</li>
+                </ul>
+              </div>
             </div>
           </div>
 
@@ -126,6 +136,8 @@ const Footer = ({ user, onOpenAuthModal }) => {
               </span>
             </div>
 
+            
+
             <div className="flex items-center space-x-6 text-sm">
               <Link
                 to="/privacy"
@@ -143,9 +155,7 @@ const Footer = ({ user, onOpenAuthModal }) => {
               </Link>
               <Link
                 to="/contact"
-                onClick={() => {
-                  window.open('mailto:team.placeprep@gmail.com', '_blank');
-                }}
+                onClick={handleGuardedClick}
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 Contact Us

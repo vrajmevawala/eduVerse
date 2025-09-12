@@ -34,6 +34,9 @@ import ContestResults from './pages/ContestResults.jsx';
 import AdminContests from './pages/AdminContests.jsx';
 import AdminResults from './pages/AdminResults.jsx';
 import AIAssistant from './pages/AIAssistant.jsx';
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
+import TermsOfService from './pages/TermsOfService.jsx';
+import ContactUs from './pages/ContactUs.jsx';
 
 // Contexts
 import { NotificationProvider } from './contexts/NotificationContext.jsx';
@@ -230,6 +233,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Home user={user} onOpenAuthModal={openAuthModal} />} />
             <Route path="/why-choose-us" element={<WhyChooseUs />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/contact" element={<ContactUs />} />
             <Route path="/resources" element={<Resource user={user} />} />
             <Route path="/contests" element={<Contest user={user} />} />
             <Route path="/practice" element={<Practice user={user} />} />
@@ -275,7 +281,8 @@ function App() {
           <ToastContainer position="top-right" autoClose={3000} />
         </motion.main>
         {!(user && user.role === 'admin' && location.pathname === '/dashboard') && (
-          <Footer user={user} onOpenAuthModal={openAuthModal} />
+          <Footer user={user} onOpenAuthModal={openAuthModal} developerName="Aaryan Chavda"/>
+          
         )}
 
 

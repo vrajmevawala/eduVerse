@@ -827,9 +827,16 @@ const TakeContest = () => {
             <div className="space-y-6">
           {/* Question */}
               <div className="bg-white border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-black mb-4">
-                  Question {currentQuestionIndex + 1}
-              </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-black">
+                    Question {currentQuestionIndex + 1}
+                  </h2>
+                  {typeof currentQuestion?.score !== 'undefined' && (
+                    <span className="text-sm font-semibold px-3 py-1 border border-gray-300 bg-gray-50 text-gray-900">
+                      {Number(currentQuestion.score) === 1 ? '1 mark' : `${Number(currentQuestion.score)} marks`}
+                    </span>
+                  )}
+                </div>
                 <p className="text-gray-700 leading-relaxed mb-6">
                   {currentQuestion.question}
             </p>
