@@ -48,6 +48,11 @@ export const createTestSeries = async (req, res) => {
       return res.status(400).json({ message: 'Provide at least one question.' });
     }
 
+    // Allow optional subcategory from body for easier filtering
+    const subcategory = typeof req.body.subcategory === 'string' && req.body.subcategory.trim() !== ''
+      ? req.body.subcategory.trim()
+      : null;
+
     // Generate contest code if required
     let contestCode = null;
     if (requiresCode) {
@@ -78,6 +83,7 @@ export const createTestSeries = async (req, res) => {
         contestCode,
         hasNegativeMarking: hasNegativeMarking || false,
         negativeMarkingValue: negativeMarkingValue || 0.25,
+        subcategory,
         createdBy: userId,
         questions: {
           connect: questionIds.map(id => ({ id })),
@@ -119,6 +125,7 @@ export const getAllTestSeries = async (req, res) => {
         endTime: true,
         requiresCode: true,
         contestCode: true,
+        subcategory: true,
         _count: {
           select: {
             participations: true
@@ -129,8 +136,10 @@ export const getAllTestSeries = async (req, res) => {
             fullName: true
           }
         }
-      }
+      },
+      orderBy: { startTime: 'desc' }
     });
+
     const mapped = tests.map(t => ({
       id: t.id,
       title: t.title,
@@ -138,10 +147,9 @@ export const getAllTestSeries = async (req, res) => {
       endTime: t.endTime,
       requiresCode: t.requiresCode,
       contestCode: t.contestCode,
-      hasNegativeMarking: t.hasNegativeMarking,
-      negativeMarkingValue: t.negativeMarkingValue,
-      participantsCount: t._count?.participations || 0,
-      creator: t.creator
+      participants: t._count.participations,
+      creator: t.creator,
+      subcategory: t.subcategory || null
     }));
     res.json({ testSeries: mapped });
   } catch (error) {
@@ -290,8 +298,7 @@ export const submitTestSeriesAnswers = async (req, res) => {
             id: true, 
             correctAnswers: true,
             question: true,
-            options: true,
-            score: true
+            options: true
           }
         }
       }
@@ -335,7 +342,7 @@ export const submitTestSeriesAnswers = async (req, res) => {
         } else if (testSeries.hasNegativeMarking) {
           // Apply negative marking for wrong answers using per-question ratio
           const ratio = Number(testSeries.negativeMarkingValue) || 0;
-          const qScore = Number(questionMap[ans.questionId]?.score) || 1;
+          const qScore = 1;
           negativeMarks += ratio * qScore;
           console.log(`Wrong answer for question ${ans.questionId}: adding ${testSeries.negativeMarkingValue} negative marks`);
         }
@@ -350,7 +357,7 @@ export const submitTestSeriesAnswers = async (req, res) => {
         correctAnswer: (correctMap[ans.questionId] || []).join(', '),
         isCorrect: hasAnswer && (correctMap[ans.questionId] || []).includes(ans.selectedOption.trim()),
         isAttempted: hasAnswer,
-        negativeMarks: hasAnswer && !(correctMap[ans.questionId] || []).includes(ans.selectedOption.trim()) && testSeries.hasNegativeMarking ? ((Number(testSeries.negativeMarkingValue) || 0) * (Number(questionMap[ans.questionId]?.score) || 1)) : 0
+        negativeMarks: hasAnswer && !(correctMap[ans.questionId] || []).includes(ans.selectedOption.trim()) && testSeries.hasNegativeMarking ? ((Number(testSeries.negativeMarkingValue) || 0) * 1) : 0
       });
     });
     
@@ -568,7 +575,7 @@ export const getUserContestResult = async (req, res) => {
           correct++;
         } else if (contest.hasNegativeMarking) {
           // Apply negative marking for wrong answers
-          const qScore = Number(question.score) || 1;
+          const qScore = 1;
           negativeMarks += (Number(contest.negativeMarkingValue) || 0) * qScore;
         }
       }
@@ -581,7 +588,7 @@ export const getUserContestResult = async (req, res) => {
         correctAnswer: (correctMap[question.id] || []).join(', '),
         isCorrect: hasAnswer && (correctMap[question.id] || []).includes(activity.selectedAnswer),
         isAttempted: hasAnswer,
-        negativeMarks: hasAnswer && !(correctMap[question.id] || []).includes(activity.selectedAnswer) && contest.hasNegativeMarking ? ((Number(contest.negativeMarkingValue) || 0) * (Number(question.score) || 1)) : 0
+        negativeMarks: hasAnswer && !(correctMap[question.id] || []).includes(activity.selectedAnswer) && contest.hasNegativeMarking ? ((Number(contest.negativeMarkingValue) || 0) * 1) : 0
       });
     });
     
@@ -655,8 +662,7 @@ export const getContestLeaderboard = async (req, res) => {
         questions: { 
           select: { 
             id: true, 
-            correctAnswers: true,
-            score: true
+            correctAnswers: true
           } 
         } 
       }
@@ -885,9 +891,7 @@ export const getContestStats = async (req, res) => {
       let negative = 0;
       if (contest.hasNegativeMarking) {
         const ratio = Number(contest.negativeMarkingValue) || 0;
-        // Without per-user mapping here, approximate by weighting with average question score
-        const avgScore = contest.questions.length ? (contest.questions.reduce((s, q) => s + (Number(q.score) || 1), 0) / contest.questions.length) : 1;
-        negative = wrong * ratio * avgScore;
+        negative = wrong * ratio * 1;
       }
       const finalScore = Math.max(0, correct - negative);
       return finalScore;
@@ -1504,8 +1508,7 @@ export const getContestParticipants = async (req, res) => {
               const hasAns = a.selectedAnswer && a.selectedAnswer.trim() !== '' && a.selectedAnswer !== 'null';
               const isCorrect = hasAns && Array.isArray(a.question.correctAnswers) && a.question.correctAnswers.includes(a.selectedAnswer);
               if (hasAns && !isCorrect) {
-                const qScore = Number(a.question?.score) || 1;
-                negative += ratio * qScore;
+                negative += ratio * 1;
               }
             });
           }

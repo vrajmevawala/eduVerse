@@ -10,6 +10,7 @@ const AdminContests = ({ user }) => {
   const [contestSort, setContestSort] = useState({ field: 'startTime', order: 'desc' });
   const [contestStatus, setContestStatus] = useState('all');
   const [contestCodeFilter, setContestCodeFilter] = useState('all');
+  const [subcategoryFilter, setSubcategoryFilter] = useState('');
   const [showContestQuestionsModal, setShowContestQuestionsModal] = useState(false);
   const [selectedContestQuestions, setSelectedContestQuestions] = useState([]);
   const [showContestStatsModal, setShowContestStatsModal] = useState(false);
@@ -54,6 +55,7 @@ const AdminContests = ({ user }) => {
       if (contestStatus !== 'all' && getContestStatus(c) !== contestStatus) return false;
       if (contestCodeFilter === 'with' && !c.requiresCode) return false;
       if (contestCodeFilter === 'without' && c.requiresCode) return false;
+      if (subcategoryFilter && (c.subcategory || '').toLowerCase().indexOf(subcategoryFilter.toLowerCase()) === -1) return false;
       return true;
     })
     .sort((a, b) => {
@@ -160,7 +162,7 @@ const AdminContests = ({ user }) => {
         {/* Filters */}
         <div className="bg-white border border-gray-200 p-6 mb-8">
           <h3 className="text-lg font-bold text-black mb-4">Filters & Sorting</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             <div>
               <label className="block text-sm font-semibold text-black mb-2">Sort by</label>
               <select 
@@ -171,6 +173,15 @@ const AdminContests = ({ user }) => {
                 <option value="startTime">Start Time</option>
                 <option value="endTime">End Time</option>
               </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">Subcategory</label>
+              <input
+                value={subcategoryFilter}
+                onChange={e => setSubcategoryFilter(e.target.value)}
+                placeholder="Search subcategory"
+                className="w-full px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-black focus:border-black transition-colors"
+              />
             </div>
             <div>
               <label className="block text-sm font-semibold text-black mb-2">Order</label>

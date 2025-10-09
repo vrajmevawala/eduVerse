@@ -370,6 +370,28 @@ const TakeContest = () => {
         handleViolation('Ctrl+T (new tab)');
       }
 
+      // Keyboard interrupt patterns
+      if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        handleViolation('Keyboard interrupt: Copy (Ctrl+C)');
+      }
+
+      if (e.ctrlKey && (e.key === 'x' || e.key === 'X')) {
+        e.preventDefault();
+        handleViolation('Keyboard interrupt: Cut (Ctrl+X)');
+      }
+
+      if (e.ctrlKey && (e.key === 'v' || e.key === 'V')) {
+        e.preventDefault();
+        handleViolation('Keyboard interrupt: Paste (Ctrl+V)');
+      }
+
+      // PrintScreen key (often reported as "PrintScreen" or "PrtSc")
+      if (e.key && (e.key.toLowerCase() === 'printscreen' || e.key.toLowerCase() === 'prtsc')) {
+        e.preventDefault();
+        handleViolation('Keyboard interrupt: PrintScreen');
+      }
+
       // Block function keys that might be used for cheating
       if (e.key === 'F1' || e.key === 'F2' || e.key === 'F3' || e.key === 'F4' || 
           e.key === 'F5' || e.key === 'F6' || e.key === 'F7' || e.key === 'F8' || 

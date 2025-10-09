@@ -1927,7 +1927,6 @@ const AdminDashboard = ({ user, onNavigate }) => {
                   <th className="py-2 px-3">Category</th>
                   <th className="py-2 px-3">Subcategory</th>
                   <th className="py-2 px-3">Level</th>
-                  <th className="py-2 px-3">Score</th>
                   <th className="py-2 px-3">Actions</th>
                 </tr>
               </thead>
@@ -1979,7 +1978,6 @@ const AdminDashboard = ({ user, onNavigate }) => {
                         <td className="py-2 px-3">{q.category}</td>
                         <td className="py-2 px-3">{q.subcategory}</td>
                         <td className="py-2 px-3">{q.level}</td>
-                        <td className="py-2 px-3">{Array.isArray(q.correctAnswers) ? q.correctAnswers.length : (q.correctAns ? 1 : 0)}</td>
                         <td className="py-2 px-3 flex gap-2">
                           <button
                             onClick={() => handleEditQuestion(q)}

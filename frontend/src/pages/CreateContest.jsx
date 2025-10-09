@@ -26,6 +26,7 @@ const CreateContest = ({ contestId: contestIdProp, embedded = false, onClose }) 
   const [endTime, setEndTime] = useState("13:00");
   const [requiresCode, setRequiresCode] = useState(false);
   const [hasNegativeMarking, setHasNegativeMarking] = useState(false);
+  const [contestSubcategory, setContestSubcategory] = useState("");
   const [negativeMarkingValue, setNegativeMarkingValue] = useState(0.25);
   const [allQuestions, setAllQuestions] = useState([]);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
@@ -788,6 +789,7 @@ const CreateContest = ({ contestId: contestIdProp, embedded = false, onClose }) 
         requiresCode: requiresCode,
         hasNegativeMarking: hasNegativeMarking,
         negativeMarkingValue: negativeMarkingValue,
+        subcategory: contestSubcategory?.trim() || null,
       }),
     });
 
@@ -946,6 +948,19 @@ const CreateContest = ({ contestId: contestIdProp, embedded = false, onClose }) 
                   Available questions: {allQuestions.length}
                 </p>
               </div>
+            </div>
+
+            <div className="mt-8">
+              <label className="block text-sm font-semibold text-black mb-3">
+                Subcategory
+              </label>
+              <input
+                className="w-full px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-black focus:border-black transition-colors"
+                value={contestSubcategory}
+                onChange={(e) => setContestSubcategory(e.target.value)}
+                placeholder="e.g., Odd Man Out & Series"
+              />
+              <p className="text-xs text-gray-500 mt-1">Optional label to organize contests.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">

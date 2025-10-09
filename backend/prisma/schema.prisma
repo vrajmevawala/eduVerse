@@ -61,6 +61,7 @@ model TestSeries {
   creator           User              @relation("UserTestSeries", fields: [createdBy], references: [id], onDelete: Cascade)
   questions         Question[]        @relation("TestSeriesQuestions")
   level             Level?            // Made optional
+  subcategory       String?
 }
 
 model freePractice {
@@ -113,7 +114,6 @@ model Activity {
   id        Int      @id @default(autoincrement())
   user      String
   action    String
-  score     Int?
   timestamp DateTime @default(now())
 }
 
