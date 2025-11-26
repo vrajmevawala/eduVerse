@@ -859,8 +859,7 @@ export const getContestStats = async (req, res) => {
             id: true, 
             correctAnswers: true,
             question: true,
-            options: true,
-            score: true
+            options: true
           } 
         } 
       }
@@ -1591,8 +1590,7 @@ export const getParticipantAnswers = async (req, res) => {
                 question: true,
                 options: true,
                 correctAnswers: true,
-                explanation: true,
-                score: true
+                explanation: true
               }
             }
           }

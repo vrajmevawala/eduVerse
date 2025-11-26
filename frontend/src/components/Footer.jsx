@@ -62,7 +62,7 @@ const Footer = ({ user, onOpenAuthModal }) => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-gray-300">
                 <Mail className="w-4 h-4 text-gray-400" />
-                <span className="text-sm">team.placeprep@gmail.com</span>
+                <span className="text-sm">contact.teameduverse@gmail.com</span>
               </div>
             </div>
           </div>
@@ -145,7 +145,7 @@ const Footer = ({ user, onOpenAuthModal }) => {
               <Link
                 to="/contact"
                 onClick={() => {
-                  window.open('mailto:team.placeprep@gmail.com', '_blank');
+                  window.open('mailto:contact.teameduverse@gmail.com', '_blank');
                 }}
                 className="text-gray-400 hover:text-white transition-colors"
               >

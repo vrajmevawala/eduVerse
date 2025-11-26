@@ -102,23 +102,30 @@ function App() {
     checkSession();
   }, [navigate]);
 
-
-
-  // Immediate token detection for reset password
-  if (window.location.pathname === '/reset-password' && !resetToken) {
-    const token = new URLSearchParams(window.location.search).get('token');
-    
-    if (token) {
-      setResetToken(token);
-      setAuthModalType('reset-password');
-      setShowAuthModal(true);
-      // Clean up the URL after setting state
-      setTimeout(() => {
-        window.history.replaceState({}, document.title, '/');
-      }, 100);
-      return;
+  // Handle reset password token from URL
+  useEffect(() => {
+    if (window.location.pathname === '/reset-password') {
+      const token = new URLSearchParams(window.location.search).get('token');
+      
+      console.log('Reset password route detected');
+      console.log('Token:', token);
+      
+      if (token) {
+        console.log('Setting reset token and opening modal');
+        setResetToken(token);
+        setAuthModalType('reset-password');
+        setShowAuthModal(true);
+        // Clean up the URL after setting state
+        setTimeout(() => {
+          window.history.replaceState({}, document.title, '/');
+        }, 100);
+      } else {
+        console.log('No token found, redirecting to home');
+        // No token provided, redirect to home
+        navigate('/');
+      }
     }
-  }
+  }, [location.pathname, location.search, navigate]);
 
 
 

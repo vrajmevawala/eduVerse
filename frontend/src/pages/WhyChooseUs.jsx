@@ -134,7 +134,7 @@ const WhyChooseUs = () => {
           ))}
         </div>
 
-        <div className="mt-20 bg-gray-800 rounded-2xl py-10 px-6 shadow-lg flex flex-col items-center text-center">
+        <div className="mt-20 bg-black rounded-2xl py-10 px-6 shadow-lg flex flex-col items-center text-center">
           <ShieldCheck className="h-12 w-12 text-white mb-3" />
           <h2 className="text-3xl font-bold text-white mb-3">
             Join EduVerse Today!
@@ -248,9 +248,6 @@ const WhyChooseUs = () => {
           </div>
         </div>
       </div>
-
-
-
     </div>
   );
 };

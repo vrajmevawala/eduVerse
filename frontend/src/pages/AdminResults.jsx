@@ -275,7 +275,7 @@ const AdminResults = ({ user, embedded = false }) => {
         lowestScore: 0,
         medianScore: 0,
         completionRate: 0,
-        standardDeviation: 0,
+        //standardDeviation: 0,
         averageTime: 0
       };
     }
@@ -294,7 +294,7 @@ const AdminResults = ({ user, embedded = false }) => {
       lowestScore: Math.min(...scores),
       medianScore: scores.sort((a, b) => a - b)[Math.floor(scores.length / 2)],
       completionRate: (completedParticipants / totalParticipants) * 100,
-      standardDeviation: Math.sqrt(scores.reduce((sq, n) => sq + Math.pow(n - meanScore, 2), 0) / totalParticipants),
+      //standardDeviation: Math.sqrt(scores.reduce((sq, n) => sq + Math.pow(n - meanScore, 2), 0) / totalParticipants),
       averageTime
     };
   };
@@ -591,7 +591,7 @@ const AdminResults = ({ user, embedded = false }) => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           <div className="flex items-center space-x-1">
                             <Users className="w-4 h-4" />
-                            <span>{contest.participantsCount ?? contest.participants?.length ?? 0}</span>
+                            <span>{contest.participants ?? 0}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -697,148 +697,152 @@ const AdminResults = ({ user, embedded = false }) => {
               ) : (
                 <>
                   {/* Overview Tab */}
-                  {analysisTab === 'overview' && contestStats && (
-                    <div className="space-y-6">
-                      {(() => { const perf = calculatePerformanceMetrics(contestResults); return (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Users className="w-5 h-5 text-blue-600" />
-                            <span className="text-sm font-medium text-gray-600">Total Participants</span>
+                  {analysisTab === 'overview' && contestStats && (() => {
+                    const perf = calculatePerformanceMetrics(contestResults);
+                    return (
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <div className="flex items-center space-x-2">
+                              <Users className="w-5 h-5 text-blue-600" />
+                              <span className="text-sm font-medium text-gray-600">Total Participants</span>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 mt-2">{contestStats.totalParticipants || 0}</p>
                           </div>
-                          <p className="text-2xl font-bold text-gray-900 mt-2">{contestStats.totalParticipants || 0}</p>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Trophy className="w-5 h-5 text-yellow-600" />
-                            <span className="text-sm font-medium text-gray-600">Average Score</span>
+                          
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <div className="flex items-center space-x-2">
+                              <Trophy className="w-5 h-5 text-yellow-600" />
+                              <span className="text-sm font-medium text-gray-600">Average Score</span>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 mt-2">{perf.averageScore.toFixed(2)}</p>
                           </div>
-                          <p className="text-2xl font-bold text-gray-900 mt-2">{perf.averageScore.toFixed(2)}</p>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Target className="w-5 h-5 text-green-600" />
-                            <span className="text-sm font-medium text-gray-600">Highest Score</span>
+                          
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <div className="flex items-center space-x-2">
+                              <Target className="w-5 h-5 text-green-600" />
+                              <span className="text-sm font-medium text-gray-600">Highest Score</span>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 mt-2">{perf.highestScore}</p>
                           </div>
-                          <p className="text-2xl font-bold text-gray-900 mt-2">{perf.highestScore}</p>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="w-5 h-5 text-purple-600" />
-                            <span className="text-sm font-medium text-gray-600">Completion Rate</span>
+                          
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <div className="flex items-center space-x-2">
+                              <Calendar className="w-5 h-5 text-purple-600" />
+                              <span className="text-sm font-medium text-gray-600">Completion Rate</span>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 mt-2">{perf.completionRate.toFixed(1)}%</p>
                           </div>
-                          <p className="text-2xl font-bold text-gray-900 mt-2">{perf.completionRate.toFixed(1)}%</p>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Clock className="w-5 h-5 text-red-600" />
-                            <span className="text-sm font-medium text-gray-600">Average Time</span>
+                          
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <div className="flex items-center space-x-2">
+                              <Clock className="w-5 h-5 text-red-600" />
+                              <span className="text-sm font-medium text-gray-600">Average Time</span>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 mt-2">{perf.averageTime} min</p>
                           </div>
-                          <p className="text-2xl font-bold text-gray-900 mt-2">{perf.averageTime} min</p>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <BarChart3 className="w-5 h-5 text-indigo-600" />
-                            <span className="text-sm font-medium text-gray-600">Questions</span>
+                          
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <div className="flex items-center space-x-2">
+                              <BarChart3 className="w-5 h-5 text-indigo-600" />
+                              <span className="text-sm font-medium text-gray-600">Questions</span>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900 mt-2">{contestStats.totalQuestions || 0}</p>
                           </div>
-                          <p className="text-2xl font-bold text-gray-900 mt-2">{contestStats.totalQuestions || 0}</p>
                         </div>
-                      </div>
-                      ); })()}
 
-                      {/* Performance Distribution */}
-                      {contestResults.length > 0 && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6">
-                          <h4 className="text-lg font-semibold text-gray-900 mb-4">Performance Distribution</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            {[
-                              { label: 'Excellent (80-100%)', range: [80, 100], color: 'bg-green-500' },
-                              { label: 'Good (60-79%)', range: [60, 79], color: 'bg-blue-500' },
-                              { label: 'Average (40-59%)', range: [40, 59], color: 'bg-yellow-500' },
-                              { label: 'Poor (0-39%)', range: [0, 39], color: 'bg-red-500' }
-                            ].map((category) => {
-                              const count = contestResults.filter(result => {
-                                const percentage = result.percentage || 0;
-                                return percentage >= category.range[0] && percentage <= category.range[1];
-                              }).length;
-                              const percentage = contestResults.length > 0 ? (count / contestResults.length * 100).toFixed(1) : 0;
-                              
-                              return (
-                                <div key={category.label} className="text-center">
-                                  <div className={`w-16 h-16 rounded-full ${category.color} mx-auto mb-2 flex items-center justify-center text-white font-bold`}>
-                                    {count}
+                        {/* Performance Distribution */}
+                        {contestResults.length > 0 && (
+                          <div className="bg-white border border-gray-200 rounded-lg p-6">
+                            <h4 className="text-lg font-semibold text-gray-900 mb-4">Performance Distribution</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                              {[
+                                { label: 'Excellent (80-100%)', range: [80, 100], color: 'bg-green-500' },
+                                { label: 'Good (60-79%)', range: [60, 79], color: 'bg-blue-500' },
+                                { label: 'Average (40-59%)', range: [40, 59], color: 'bg-yellow-500' },
+                                { label: 'Poor (0-39%)', range: [0, 39], color: 'bg-red-500' }
+                              ].map((category) => {
+                                const count = contestResults.filter(result => {
+                                  const percentage = result.percentage || 0;
+                                  return percentage >= category.range[0] && percentage <= category.range[1];
+                                }).length;
+                                const percentage = contestResults.length > 0 ? (count / contestResults.length * 100).toFixed(1) : 0;
+                                
+                                return (
+                                  <div key={category.label} className="text-center">
+                                    <div className={`w-16 h-16 rounded-full ${category.color} mx-auto mb-2 flex items-center justify-center text-white font-bold`}>
+                                      {count}
+                                    </div>
+                                    <p className="text-sm font-medium text-gray-900">{category.label}</p>
+                                    <p className="text-sm text-gray-500">{percentage}%</p>
                                   </div>
-                                  <p className="text-sm font-medium text-gray-900">{category.label}</p>
-                                  <p className="text-sm text-gray-500">{percentage}%</p>
-                                </div>
-                              );
-                            })}
+                                );
+                              })}
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   {/* Performance Tab */}
                   {analysisTab === 'performance' && (
                     <div className="space-y-6">
-                      {contestResults.length > 0 ? (() => { const perf = calculatePerformanceMetrics(contestResults); return (
-                        <>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {Object.entries(perf).map(([key, value]) => (
-                              <div key={key} className="bg-gray-50 p-4 rounded-lg">
-                                <div className="flex items-center space-x-2">
-                                  <TrendingUp className="w-5 h-5 text-blue-600" />
-                                  <span className="text-sm font-medium text-gray-600">
-                                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                                  </span>
+                      {contestResults.length > 0 ? (() => {
+                        const perf = calculatePerformanceMetrics(contestResults);
+                        return (
+                          <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                              {Object.entries(perf).map(([key, value]) => (
+                                <div key={key} className="bg-gray-50 p-4 rounded-lg">
+                                  <div className="flex items-center space-x-2">
+                                    <TrendingUp className="w-5 h-5 text-blue-600" />
+                                    <span className="text-sm font-medium text-gray-600">
+                                      {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                    </span>
+                                  </div>
+                                  <p className="text-2xl font-bold text-gray-900 mt-2">
+                                    {typeof value === 'number' ? value.toFixed(2) : value}
+                                    {key === 'completionRate' && '%'}
+                                  </p>
                                 </div>
-                                <p className="text-2xl font-bold text-gray-900 mt-2">
-                                  {typeof value === 'number' ? value.toFixed(2) : value}
-                                  {key === 'completionRate' && '%'}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Score Distribution Chart */}
-                          <div className="bg-white border border-gray-200 rounded-lg p-6">
-                            <h4 className="text-lg font-semibold text-gray-900 mb-4">Score Distribution</h4>
-                            <div className="space-y-3">
-                              {contestResults
-                                .sort((a, b) => (b.score || 0) - (a.score || 0))
-                                .slice(0, 10)
-                                .map((result, index) => {
-                                  const percentage = result.percentage || 0;
-                                  return (
-                                    <div key={result.id} className="flex items-center space-x-4">
-                                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
-                                        {index + 1}
-                                      </div>
-                                      <div className="flex-1">
-                                        <div className="flex justify-between text-sm mb-1">
-                                          <span className="font-medium">{result.name || 'Unknown'}</span>
-                                          <span className={getPerformanceColor(percentage)}>{percentage.toFixed(1)}%</span>
-                                        </div>
-                                        <div className="w-full bg-gray-200 rounded-full h-2">
-                                          <div 
-                                            className={`h-2 rounded-full ${percentage >= 80 ? 'bg-green-500' : percentage >= 60 ? 'bg-blue-500' : percentage >= 40 ? 'bg-yellow-500' : 'bg-red-500'}`}
-                                            style={{ width: `${percentage}%` }}
-                                          ></div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
+                              ))}
                             </div>
-                          </div>
-                        </>
-                      ); })() : (
+
+                            {/* Score Distribution Chart */}
+                            <div className="bg-white border border-gray-200 rounded-lg p-6">
+                              <h4 className="text-lg font-semibold text-gray-900 mb-4">Score Distribution</h4>
+                              <div className="space-y-3">
+                                {contestResults
+                                  .sort((a, b) => (b.score || 0) - (a.score || 0))
+                                  .slice(0, 10)
+                                  .map((result, index) => {
+                                    const percentage = result.percentage || 0;
+                                    return (
+                                      <div key={result.id} className="flex items-center space-x-4">
+                                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
+                                          {index + 1}
+                                        </div>
+                                        <div className="flex-1">
+                                          <div className="flex justify-between text-sm mb-1">
+                                            <span className="font-medium">{result.name || 'Unknown'}</span>
+                                            <span className={getPerformanceColor(percentage)}>{percentage.toFixed(1)}%</span>
+                                          </div>
+                                          <div className="w-full bg-gray-200 rounded-full h-2">
+                                            <div 
+                                              className={`h-2 rounded-full ${percentage >= 80 ? 'bg-green-500' : percentage >= 60 ? 'bg-blue-500' : percentage >= 40 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                                              style={{ width: `${percentage}%` }}
+                                            ></div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                              </div>
+                            </div>
+                          </>
+                        );
+                      })() : (
                         <div className="text-center py-8">
                           <TrendingUp className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                           <p className="text-gray-600">No performance data available.</p>
@@ -1075,9 +1079,9 @@ const AdminResults = ({ user, embedded = false }) => {
                                       </td>
                                       <td className="px-4 py-4 whitespace-nowrap">
                                         <div className="text-sm font-medium text-gray-900">{result.score || 0}</div>
-                                        <div className="text-sm text-gray-500">
-                                          {contestStats?.totalQuestions ? `${((result.score || 0) / contestStats.totalQuestions * 100).toFixed(1)}%` : '0%'}
-                                        </div>
+                                        {/* <div className="text-sm text-gray-500"> */}
+                                          {/* {contestStats?.totalQuestions ? `${((result.score || 0) / contestStats.totalQuestions * 100).toFixed(1)}%` : '0%'} */}
+                                        {/* </div> */}
                                       </td>
                                       <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{result.timeTaken ? `${result.timeTaken} min` : 'N/A'}</td>
                                       <td className="px-4 py-4 whitespace-nowrap">
