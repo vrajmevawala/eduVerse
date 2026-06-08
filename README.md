@@ -24,6 +24,14 @@ A comprehensive online platform for placement preparation with contests, practic
 - **Contest Management**: Create contests and monitor participation
 - **Content Moderation**: Review and approve content
 
+### 🚀 Performance & Optimizations
+- **Background Workers (BullMQ)**: Offloads heavy tasks like email sending to background workers for non-blocking API responses
+- **Redis Caching**: Implemented caching for frequently accessed data to reduce database load and improve response times
+
+## 🏗️ System Architecture
+
+![System Architecture](./systemArchitecture.png)
+
 ## 🛠️ Tech Stack
 
 ### Backend
@@ -34,6 +42,8 @@ A comprehensive online platform for placement preparation with contests, practic
 - **Multer** for file uploads
 - **Nodemailer** for email notifications
 - **Cron jobs** for automated tasks
+- **Redis** for caching and queues
+- **BullMQ** for background job processing
 
 ### Frontend
 - **React 18** with Vite
@@ -49,6 +59,7 @@ A comprehensive online platform for placement preparation with contests, practic
 
 - Node.js (v16 or higher)
 - PostgreSQL (v12 or higher)
+- Redis (v5 or higher)
 - npm or yarn
 
 ## 🚀 Installation
@@ -253,6 +264,7 @@ For support, please contact the development team or create an issue in the repos
 - **v1.2.0**: Added resource management
 - **v1.3.0**: Added bookmark functionality
 - **v1.4.0**: Added comprehensive analytics
+- **v1.5.0**: Added Redis caching and BullMQ background workers
 
 ---
 
