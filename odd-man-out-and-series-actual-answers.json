@@ -3,341 +3,310 @@
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "3, 5, 11, 14, 17, 21",
+    "question": "Identify the number that does NOT follow the pattern in the sequence: 3, 5, 11, 14, 17, 21.",
     "options": ["21", "17", "14", "3"],
     "correctAnswers": ["14"],
-    "explanation": "Each of the numbers except 14 is an odd number.The number '14' is the only EVEN number.",
-    
+    "explanation": "Each of the numbers except 14 is an odd number. The number '14' is the only EVEN number.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "8, 27, 64, 100, 125, 216, 343",
+    "question": "Among the list 8, 27, 64, 100, 125, 216, 343, identify the number that is NOT a perfect cube.",
     "options": ["27", "100", "125", "343"],
     "correctAnswers": ["100"],
-    "explanation": "The pattern is 2^3, 3^3, 4^3, 5^3, 6^3, 7^3. But, 100 is not a perfect cube.",
-    
+    "explanation": "The pattern is 2^3, 3^3, 4^3, 5^3, 6^3, 7^3. But 100 is not a perfect cube.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "10, 25, 45, 54, 60, 75, 80",
+    "question": "Find the number that is NOT a multiple of 5 in the sequence: 10, 25, 45, 54, 60, 75, 80.",
     "options": ["10", "45", "54", "75"],
     "correctAnswers": ["54"],
-    "explanation": "Each of the numbers except 54 is multiple of 5.",
-    
+    "explanation": "Each of the numbers except 54 is a multiple of 5.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "396, 462, 572, 427, 671, 264",
+    "question": "In the list 396, 462, 572, 427, 671, 264, find the number whose middle digit is NOT equal to the sum of the first and last digits.",
     "options": ["396", "427", "671", "264"],
     "correctAnswers": ["427"],
-    "explanation": "In each number except 427, the middle digit is the sum of other two.",
-    
+    "explanation": "In each number except 427, the middle digit is the sum of the other two.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "6, 9, 15, 21, 24, 28, 30",
+    "question": "Find the number that is NOT divisible by 3 in the sequence: 6, 9, 15, 21, 24, 28, 30.",
     "options": ["28", "21", "24", "30"],
     "correctAnswers": ["28"],
-    "explanation": "Each of the numbers except 28, is a multiple of 3.",
-    
+    "explanation": "Each of the numbers except 28 is a multiple of 3.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "1, 4, 9, 16, 23, 25, 36",
+    "question": "From the list 1, 4, 9, 16, 23, 25, 36, identify the number that is NOT a perfect square.",
     "options": ["9", "23", "25", "36"],
     "correctAnswers": ["23"],
-    "explanation": "Each of the numbers except 23, is perfect square.",
-    
+    "explanation": "Each of the numbers except 23 is a perfect square.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "1, 4, 9, 16, 20, 36, 49",
+    "question": "The sequence should follow 1², 2², 3², 4², 5², 6², 7². Find the number that breaks this pattern: 1, 4, 9, 16, 20, 36, 49.",
     "options": ["1", "9", "20", "49"],
     "correctAnswers": ["20"],
-    "explanation": "The pattern is 1^2, 2^2, 3^2, 4^2, 5^2, 6^2, 7^2. But, instead of 5^2, it is 20 which to be turned out.",
-    
+    "explanation": "Instead of 5² = 25, the number is 20, so it breaks the pattern.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "2, 5, 10, 17, 26, 37, 50, 64",
+    "question": "Find the number that does NOT follow the pattern (n × n) + 1 in the list: 2, 5, 10, 17, 26, 37, 50, 64.",
     "options": ["50", "26", "37", "64"],
     "correctAnswers": ["64"],
-    "explanation": "(1*1)+1 , (2*2)+1 , (3*3)+1 , (4*4)+1 , (5*5)+1 , (6*6)+1 , (7*7)+1 , (8*8)+1But, 64 is out of pattern.",
-    
+    "explanation": "The pattern (n×n)+1 does not produce 64 for any n.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "10, 14, 16, 18, 21, 24, 26",
+    "question": "Find the only odd number in the list where all others are even: 10, 14, 16, 18, 21, 24, 26.",
     "options": ["26", "24", "21", "18"],
     "correctAnswers": ["21"],
     "explanation": "Each of the numbers except 21 is an even number.",
-    
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "16, 25, 36, 72, 144, 196, 225",
+    "question": "Identify the number that is NOT a perfect square: 16, 25, 36, 72, 144, 196, 225.",
     "options": ["36", "72", "196", "225"],
     "correctAnswers": ["72"],
     "explanation": "Each of the numbers except 72 is a perfect square.",
-    
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "331, 482, 551, 263, 383, 362, 284",
+    "question": "In the list 331, 482, 551, 263, 383, 362, 284, find the number whose middle digit is NOT equal to the product of the first and last digits.",
     "options": ["263", "383", "331", "551"],
     "correctAnswers": ["383"],
-    "explanation": "In each number except 383, the product of first and third digits is the middle one.",
-    
+    "explanation": "In each number except 383, the product of first and third digits is the middle digit.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "835, 734, 642, 751, 853, 981, 532",
+    "question": "Find the number that does NOT follow the rule: (last digit − first digit) = middle digit in the list 835, 734, 642, 751, 853, 981, 532.",
     "options": ["751", "853", "981", "532"],
     "correctAnswers": ["751"],
-    "explanation": "In each number except 751, the difference of third and first digit is the middle one.",
-    
-  "visibility": true
+    "explanation": "In each number except 751, the difference of third and first digit is the middle digit.",
+    "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "41, 43, 47, 53, 61, 71, 73, 81",
+    "question": "Find the number that is NOT a prime number: 41, 43, 47, 53, 61, 71, 73, 81.",
     "options": ["61", "71", "73", "81"],
     "correctAnswers": ["81"],
     "explanation": "Each of the numbers except 81 is a prime number.",
-    
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "3, 5, 7, 12, 17, 19",
+    "question": "Identify the number that is NOT prime in the list: 3, 5, 7, 12, 17, 19.",
     "options": ["19", "17", "5", "12"],
     "correctAnswers": ["12"],
     "explanation": "Each of the numbers is a prime number except 12.",
-    
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "16, 33, 65, 131, 261, (....)",
+    "question": "The pattern is doubling the previous number and adding or subtracting 1 alternately. Find the next number after: 16, 33, 65, 131, 261, (…).",
     "options": ["523", "521", "613", "721"],
     "correctAnswers": ["523"],
-    "explanation": "Each number is twice the preceding one with 1 added or subtracted alternatively.So, the next number is (2 x 261 + 1) = 523.",
-    
+    "explanation": "Each number is twice the preceding one with 1 added or subtracted alternately. So, the next number is (2 × 261 + 1) = 523.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "10, 5, 13, 10, 16, 20, 19, (....)",
+    "question": "Two alternating patterns: +3 and ×2. Identify the next number in: 10, 5, 13, 10, 16, 20, 19, (…).",
     "options": ["22", "40", "38", "23"],
     "correctAnswers": ["40"],
     "explanation": "There are two series (10, 13, 16, 19) and (5, 10, 20, 40), one increasing by 3 and the other multiplied by 2.",
-    
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "1, 4, 9, 16, 25, 36, 49, (....)",
+    "question": "The sequence is squares of natural numbers. Find the next value after 1, 4, 9, 16, 25, 36, 49.",
     "options": ["54", "56", "64", "81"],
     "correctAnswers": ["64"],
-    "explanation": "Numbers are 1^2, 2^2, 3^2, 4^2, 5^2, 6^2, 7^2.So, the next number is 8^2 = 64.",
-    
+    "explanation": "Numbers are 1² to 7². The next number is 8² = 64.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "2, 4, 12, 48, 240, (....)",
+    "question": "Find the next number in the pattern where each term is multiplied by 2, 3, 4, 5, 6...: 2, 4, 12, 48, 240, (…).",
     "options": ["960", "1440", "1080", "1920"],
     "correctAnswers": ["1440"],
-    "explanation": "Go on multiplying the given numbers by 2, 3, 4, 5, 6.So, the correct next number is 1440.",
-    
+    "explanation": "Multiply the given numbers by 2, 3, 4, 5, 6. So, the next number is 240 × 6 = 1440.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "8, 7, 11, 12, 14, 17, 17, 22, (....)",
+    "question": "Two number patterns exist (+3 and +5). Find the next number in the sequence: 8, 7, 11, 12, 14, 17, 17, 22, (…).",
     "options": ["27", "20", "22", "24"],
     "correctAnswers": ["20"],
     "explanation": "There are two series (8, 11, 14, 17, 20) and (7, 12, 17, 22) increasing by 3 and 5 respectively.",
-    
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "11, 13, 17, 19, 23, 29, 31, 37, 41, (....)",
+    "question": "Prime number sequence. Find the next prime after 11, 13, 17, 19, 23, 29, 31, 37, 41.",
     "options": ["43", "47", "53", "51"],
     "correctAnswers": ["43"],
     "explanation": "Numbers are all primes. The next prime is 43.",
-    
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "8, 24, 12, 36, 18, 54, (....)",
+    "question": "The pattern alternates: ×3 and ÷2. Find the next term after 8, 24, 12, 36, 18, 54.",
     "options": ["27", "108", "68", "72"],
     "correctAnswers": ["27"],
-    "explanation": "Numbers are alternatively multiplied by 3 and divided by 2.So, the next number = 54 ÷ 2 = 27.",
-    
+    "explanation": "Numbers are alternately multiplied by 3 and divided by 2. So, the next number is 54 ÷ 2 = 27.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "2, 6, 12, 20, 30, 42, 56, (....)",
+    "question": "The pattern follows n × (n+1). Find the next term after: 2, 6, 12, 20, 30, 42, 56.",
     "options": ["61", "64", "72", "70"],
     "correctAnswers": ["72"],
-    "explanation": "The pattern is 1 x 2, 2 x 3, 3 x 4, 4 x 5, 5 x 6, 6 x 7, 7 x 8.So, the next number is 8 x 9 = 72.",
-    
+    "explanation": "The pattern is 1×2, 2×3, 3×4, ..., 7×8. The next is 8×9 = 72.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "4, -8, 16, -32, 64, (....)",
+    "question": "Each number is the previous number multiplied by −2. Find the next term after: 4, −8, 16, −32, 64.",
     "options": ["128", "-128", "192", "-192"],
     "correctAnswers": ["-128"],
-    "explanation": "Each number is the proceeding number multiplied by -2.So, the required number is -128.",
-    
+    "explanation": "Each number is the preceding number multiplied by -2. So, the required number is -128.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "7, 26, 63, 124, 215, 342, (....)",
+    "question": "Numbers follow the pattern n³ − 1. Find the next number after: 7, 26, 63, 124, 215, 342.",
     "options": ["481", "511", "391", "421"],
     "correctAnswers": ["511"],
-    "explanation": "Numbers are (2^3 - 1), (3^3 - 1), (4^3 - 1), (5^3 - 1), (6^3 - 1), (7^3 - 1) etc.So, the next number is (8^3 - 1) = (512 - 1) = 511.",
-    
+    "explanation": "Numbers are (2³−1), (3³−1), ... (7³−1). Next is (8³−1) = 511.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "5, 10, 13, 26, 29, 58, 61, (....)",
+    "question": "Numbers are alternately multiplied by 2 and increased by 3. Find the next number after: 5, 10, 13, 26, 29, 58, 61.",
     "options": ["122", "64", "125", "128"],
     "correctAnswers": ["122"],
-    "explanation": "Numbers are alternatively multiplied by 2 and increased by 3.So, the missing number = 61 x 2 = 122.",
-    
+    "explanation": "Numbers are alternately multiplied by 2 and increased by 3. So, the missing number = 61 × 2 = 122.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "15, 31, 63, 127, 255, (....)",
+    "question": "Each number follows (previous × 2) + 1. Find the next number after: 15, 31, 63, 127, 255.",
     "options": ["513", "511", "517", "523"],
     "correctAnswers": ["511"],
-    "explanation": "Each number is double the preceding one plus 1.So, the next number is (255 x 2) + 1 = 511.",
-    
+    "explanation": "Each number is double the preceding one plus 1. Next = 255×2 + 1 = 511.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "1, 8, 27, 64, 125, 216, (....)",
+    "question": "Find the next cube after the sequence: 1, 8, 27, 64, 125, 216.",
     "options": ["354", "343", "392", "245"],
     "correctAnswers": ["343"],
-    "explanation": "Numbers are 1^3, 2^3, 3^3, 4^3, 5^3, 6^3.So, the missing number is 7^3 = 343.",
-    
+    "explanation": "Numbers are 1³ to 6³. The next is 7³ = 343.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "3, 7, 6, 5, 9, 3, 12, 1, 15, (....)",
+    "question": "Two alternating sequences exist: (+3 series and −2 series). Find the next number after: 3, 7, 6, 5, 9, 3, 12, 1, 15.",
     "options": ["18", "13", "-1", "3"],
     "correctAnswers": ["-1"],
-    "explanation": "There are two series, beginning respectively with 3 and 7. In one 3 is added and in another 2 is subtracted.The next number is 1 - 2 = -1.",
-    
+    "explanation": "There are two series, beginning respectively with 3 and 7. In one 3 is added and in another 2 is subtracted. The next number is 1 − 2 = −1.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "1, 2, 3, 4, 5, (....)",
+    "question": "Natural numbers sequence. What comes next after: 1, 2, 3, 4, 5?",
     "options": ["7", "6", "4", "1"],
     "correctAnswers": ["6"],
-    "explanation": "Natural numbers series",
-    
+    "explanation": "Natural number series.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "0, 1, 1, 2, 3, 5, 8, (....)",
+    "question": "Fibonacci sequence. What comes next after: 0, 1, 1, 2, 3, 5, 8?",
     "options": ["18", "13", "10", "3"],
     "correctAnswers": ["13"],
-    "explanation": "Fibonacci series",
-    
+    "explanation": "Fibonacci series.",
     "visibility": true
   },
   {
     "category": "Aptitude",
     "subcategory": "Odd Man Out & Series",
     "level": "medium",
-    "question": "2, 4, 6, 8, 10, (....)",
+    "question": "Even number sequence. What comes next after: 2, 4, 6, 8, 10?",
     "options": ["12", "16", "8", "20"],
     "correctAnswers": ["12"],
-    "explanation": "Even numbers",
-    
+    "explanation": "Even numbers.",
     "visibility": true
   }
 ]

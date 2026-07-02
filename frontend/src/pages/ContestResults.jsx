@@ -291,10 +291,10 @@ const ContestResults = () => {
               
               {/* Time Taken */}
               <div className="text-center p-6 bg-gray-50 border border-gray-200">
-                <div className="text-4xl font-bold text-black mb-2">
-                  {Math.floor(timeTaken / 60)}:{(timeTaken % 60).toString().padStart(2, '0')}
+                <div className="text-4xl font-bold text-black mb-2 flex flex-row items-center justify-center">
+                  {(timeTaken % 60).toString()} min
                 </div>
-                <div className="text-sm text-gray-600">Time Taken</div>
+                <div className="text-sm text-gray-600">Time Taken </div>
               </div>
             </div>
           ) : (

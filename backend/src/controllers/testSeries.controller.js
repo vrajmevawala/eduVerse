@@ -1411,8 +1411,7 @@ export const getParticipantAnswers = async (req, res) => {
                 question: true,
                 options: true,
                 correctAnswers: true,
-                explanation: true,
-                score: true
+                explanation: true
               }
             }
           }
