@@ -26,10 +26,18 @@ export const signup = async (req, res) => {
             return res.status(400).json({ message: "Password must be at least 6 characters long" });
         }
 
-        // Check if user already exists
+        // Check if email is already registered (verified user)
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ message: "Email already exists" });
+        }
+
+        // Check if a pending (unverified) signup already exists in cache
+        const pendingSignup = await cache.get(`pending_signup:${email}`);
+        if (pendingSignup) {
+            return res.status(400).json({
+                message: "A verification code was already sent to this email. Please verify or wait for it to expire before signing up again."
+            });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -38,47 +46,28 @@ export const signup = async (req, res) => {
         // Generate verification code
         const verificationCode = generateVerificationCode();
 
-        // Insert new user without storing verification token in PostgreSQL
-        const result = await prisma.user.create({
-            data: {
-                role: role || 'user',
-                fullName,
-                email,
-                password: hashedPassword,
-                isEmailVerified: false
-            },
-            select: {
-                id: true,
-                role: true,
-                fullName: true,
-                email: true,
-                created_at: true
-            }
-        });
+        // Store pending signup data + OTP in cache (10-minute TTL). No DB write yet.
+        await cache.set(
+            `pending_signup:${email}`,
+            JSON.stringify({ fullName, hashedPassword, role: role || 'user', otp: verificationCode }),
+            600
+        );
 
-        if (result) {
-            // Store verification code in cache with a 10-minute (600s) TTL
-            await cache.set(`verification:${email}`, verificationCode, 600);
-
-            // Send verification email (non-blocking)
-            sendEmailVerificationEmail(result.email, result.fullName, verificationCode)
-                .then(() => {
-                    console.log(`Verification email sent to: ${result.email}`);
-                })
-                .catch((error) => {
-                    console.error('Failed to send verification email:', error);
-                    // Don't block the signup process if email fails
-                });
-
-            res.status(201).json({
-                message: 'Account created successfully! Please check your email for verification.',
-                userId: result.id,
-                email: result.email,
-                requiresVerification: true
+        // Send verification email (non-blocking)
+        sendEmailVerificationEmail(email, fullName, verificationCode)
+            .then(() => {
+                console.log(`Verification email sent to: ${email}`);
+            })
+            .catch((error) => {
+                console.error('Failed to send verification email:', error);
+                // Don't block the signup process if email fails
             });
-        } else {
-            res.status(400).json({ message: 'Invalid user data' });
-        }
+
+        res.status(201).json({
+            message: 'Verification code sent! Please check your email to complete signup.',
+            email,
+            requiresVerification: true
+        });
     } catch (error) {
         console.error("Error in signup controller:", error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -93,40 +82,48 @@ export const verifyEmail = async (req, res) => {
             return res.status(400).json({ message: "Email and verification code are required" });
         }
 
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        if (user.isEmailVerified) {
+        // Check if user is already registered (already verified)
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser) {
             return res.status(400).json({ message: "Email is already verified" });
         }
 
-        const cachedCode = await cache.get(`verification:${email}`);
-
-        if (!cachedCode) {
-            return res.status(400).json({ message: "Verification code not found or expired" });
+        // Fetch pending signup data from cache
+        const pendingRaw = await cache.get(`pending_signup:${email}`);
+        if (!pendingRaw) {
+            return res.status(400).json({ message: "Verification code not found or expired. Please sign up again." });
         }
 
-        if (String(cachedCode).trim() !== String(verificationCode).trim()) {
+        const pending = JSON.parse(pendingRaw);
+
+        if (String(pending.otp).trim() !== String(verificationCode).trim()) {
             return res.status(400).json({ message: "Invalid verification code" });
         }
 
-        // Mark email as verified
-        await prisma.user.update({
-            where: { id: user.id },
+        // OTP matched — now create the user record in the DB
+        const newUser = await prisma.user.create({
             data: {
-                isEmailVerified: true
+                role: pending.role,
+                fullName: pending.fullName,
+                email,
+                password: pending.hashedPassword
+            },
+            select: {
+                id: true,
+                role: true,
+                fullName: true,
+                email: true,
+                created_at: true
             }
         });
 
-        // Delete code from cache
-        await cache.del(`verification:${email}`);
+        // Remove pending signup from cache
+        await cache.del(`pending_signup:${email}`);
 
-        // Send welcome email after verification
-        sendWelcomeEmail(user.email, user.fullName)
+        // Send welcome email after verification (non-blocking)
+        sendWelcomeEmail(newUser.email, newUser.fullName)
             .then(() => {
-                console.log(`Welcome email sent to verified user: ${user.email}`);
+                console.log(`Welcome email sent to verified user: ${newUser.email}`);
             })
             .catch((error) => {
                 console.error('Failed to send welcome email:', error);
@@ -134,7 +131,7 @@ export const verifyEmail = async (req, res) => {
 
         res.status(200).json({
             message: "Email verified successfully! You can now log in.",
-            email: user.email
+            email: newUser.email
         });
     } catch (error) {
         console.error("Error in verifyEmail controller:", error);
@@ -150,25 +147,31 @@ export const resendVerificationCode = async (req, res) => {
             return res.status(400).json({ message: "Email is required" });
         }
 
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        if (user.isEmailVerified) {
+        // If user is already in DB, they are already verified
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser) {
             return res.status(400).json({ message: "Email is already verified" });
         }
 
-        // Generate new verification code
+        // Fetch pending signup from cache
+        const pendingRaw = await cache.get(`pending_signup:${email}`);
+        if (!pendingRaw) {
+            return res.status(404).json({
+                message: "No pending signup found for this email. Please sign up again."
+            });
+        }
+
+        const pending = JSON.parse(pendingRaw);
+
+        // Generate a new OTP and update the pending signup entry (reset TTL too)
         const verificationCode = generateVerificationCode();
+        pending.otp = verificationCode;
+        await cache.set(`pending_signup:${email}`, JSON.stringify(pending), 600);
 
-        // Store new verification code in cache with a 10-minute (600s) TTL
-        await cache.set(`verification:${email}`, verificationCode, 600);
-
-        // Send new verification email
-        sendEmailVerificationEmail(user.email, user.fullName, verificationCode)
+        // Send new verification email (non-blocking)
+        sendEmailVerificationEmail(email, pending.fullName, verificationCode)
             .then(() => {
-                console.log(`New verification email sent to: ${user.email}`);
+                console.log(`New verification email sent to: ${email}`);
             })
             .catch((error) => {
                 console.error('Failed to send new verification email:', error);
@@ -176,7 +179,7 @@ export const resendVerificationCode = async (req, res) => {
 
         res.status(200).json({
             message: "New verification code sent to your email",
-            email: user.email
+            email
         });
     } catch (error) {
         console.error("Error in resendVerificationCode controller:", error);
@@ -198,7 +201,6 @@ export const login = async (req, res) => {
             return res.status(400).json({ message: "Invalid Credentials" });
         }
 
-        // Allow login regardless of email verification status
         generateToken(user.id, user.role, res);
         res.status(200).json({
             role: user.role,

@@ -22,16 +22,16 @@ export const emailWorker = new Worker('email-queue', async (job) => {
   
   switch (type) {
     case 'WELCOME_EMAIL':
-      await sendWelcomeEmail(payload.email, payload.fullName);
+      await _sendWelcomeEmail(payload.email, payload.fullName);
       break;
     case 'VERIFICATION_EMAIL':
-      await sendEmailVerificationEmail(payload.email, payload.fullName, payload.verificationCode);
+      await _sendEmailVerificationEmail(payload.email, payload.fullName, payload.verificationCode);
       break;
     case 'PASSWORD_RESET_EMAIL':
-      await sendPasswordResetEmail(payload.email, payload.resetToken);
+      await _sendPasswordResetEmail(payload.email, payload.resetToken);
       break;
     case 'MODERATOR_ROLE_EMAIL':
-      await sendModeratorRoleEmail(payload.email, payload.fullName, payload.password);
+      await _sendModeratorRoleEmail(payload.email, payload.fullName, payload.password);
       break;
     default:
       console.warn(`[BullMQ Worker] Unknown email job type: ${type}`);
